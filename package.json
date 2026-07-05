@@ -1,0 +1,23 @@
+{
+  "name": "snakemuseum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A curated, static gallery of community-submitted snake games — snakemuseum.dev",
+  "type": "module",
+  "homepage": "https://snakemuseum.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ashleymcnamara/snakemuseum.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "validate": "node scripts/validate-submission.js",
+    "thumbnail": "node scripts/gen-thumbnail.js",
+    "serve": "node scripts/serve.js",
+    "start": "npm run build && npm run serve"
+  }
+}

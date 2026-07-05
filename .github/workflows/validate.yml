@@ -1,0 +1,36 @@
+name: Validate submission
+
+# Runs on every PR that touches a game folder. Treats each changed game as
+# untrusted code and fails the check (with an itemized report + job summary)
+# if anything is off. No secrets or write permissions are needed.
+on:
+  pull_request:
+    paths:
+      - "games/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate changed games
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need the base commit to diff changed folders
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate submissions
+        run: node scripts/validate-submission.js
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}

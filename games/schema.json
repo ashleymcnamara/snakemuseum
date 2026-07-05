@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://snakemuseum.dev/games/schema.json",
+  "title": "Snake Museum game metadata",
+  "description": "Schema for a game's meta.json. Every games/<slug>/meta.json must validate against this.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "author", "githubHandle", "description", "createdAt", "tags"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Display name of the game.",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "author": {
+      "type": "string",
+      "description": "Human-readable author name to credit.",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "githubHandle": {
+      "type": "string",
+      "description": "Author's GitHub username (no @). Used to link back to their profile.",
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$"
+    },
+    "description": {
+      "type": "string",
+      "description": "A short blurb shown on the game's card.",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "createdAt": {
+      "type": "string",
+      "description": "Submission/creation date as an ISO 8601 date (YYYY-MM-DD).",
+      "format": "date"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Lowercase-ish keywords used for filtering (e.g. classic, arcade, hard).",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 30
+      },
+      "minItems": 0,
+      "maxItems": 10,
+      "uniqueItems": true
+    }
+  }
+}

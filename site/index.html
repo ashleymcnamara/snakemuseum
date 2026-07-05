@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    Strict, third-party-free Content Security Policy.
+    Everything the gallery loads is same-origin: our own app.js / styles.css,
+    the generated games.json, thumbnails, and the game iframes (frame-src 'self').
+    No 'unsafe-inline' anywhere — all script and style live in local files.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; manifest-src 'self'" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="color-scheme" content="dark" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='88'%3E%F0%9F%90%8D%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <title>Snake Museum — a gallery of community snake games</title>
+  <meta name="description" content="A curated, static gallery of community-submitted snake games. Every game runs in a sandboxed iframe. Submit yours via pull request." />
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🐍</span>
+        <div>
+          <h1 class="brand-title">Snake Museum</h1>
+          <p class="brand-sub">A curated gallery of community-submitted snake games</p>
+        </div>
+      </div>
+      <nav class="masthead-links" aria-label="Primary">
+        <a class="ghost-btn" href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">GitHub</a>
+        <a class="cta-btn" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">Submit a game</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="toolbar" aria-label="Filter games">
+      <div class="search">
+        <label class="visually-hidden" for="search">Search games</label>
+        <input id="search" type="search" placeholder="Search by title, author, or tag…" autocomplete="off" />
+      </div>
+      <div class="tagbar" id="tagbar" role="group" aria-label="Filter by tag"></div>
+      <p class="count" id="count" aria-live="polite"></p>
+    </section>
+
+    <section id="gallery" class="gallery" aria-label="Games"></section>
+
+    <p id="empty" class="empty" hidden>
+      No games match your filter yet. Clear the search — or
+      <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">submit the first one</a>.
+    </p>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot-inner">
+      <p class="foot-security">
+        🔒 <strong>Security model:</strong> every exhibit is community code, so it is
+        treated as untrusted and played inside a
+        <code>&lt;iframe sandbox="allow-scripts"&gt;</code> with an opaque origin —
+        it cannot read this site's cookies, storage, or DOM, and no secrets are ever
+        passed in. Submissions are additionally screened by CI and human review.
+      </p>
+      <p class="foot-meta">
+        Site &amp; tooling under the MIT license · games remain © their authors ·
+        <a href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">source</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Game player modal (populated by app.js) -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-head">
+        <div class="modal-heading">
+          <h2 id="modal-title" class="modal-title"></h2>
+          <p id="modal-author" class="modal-author"></p>
+        </div>
+        <div class="modal-actions">
+          <a id="modal-newtab" class="ghost-btn" href="#" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
+          <button id="modal-close" class="icon-btn" type="button" aria-label="Close player">✕</button>
+        </div>
+      </header>
+      <div class="modal-stage" id="modal-stage"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

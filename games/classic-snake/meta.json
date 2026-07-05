@@ -1,0 +1,8 @@
+{
+  "title": "Classic Snake",
+  "author": "Ashley McNamara",
+  "githubHandle": "ashleymcnamara",
+  "description": "The timeless snake game, done right: smooth grid movement, wrap-free walls, growing tail, score and high-score tracking, pause, and instant restart. Play with the arrow keys or WASD.",
+  "createdAt": "2026-07-04",
+  "tags": ["classic", "arcade", "canvas", "keyboard", "reference"]
+}
