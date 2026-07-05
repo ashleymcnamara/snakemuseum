@@ -15,7 +15,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; manifest-src 'self'" />
   <meta name="referrer" content="no-referrer" />
   <meta name="color-scheme" content="dark" />
-  <meta name="theme-color" content="#0a0e16" />
+  <meta name="theme-color" content="#06110d" />
 
   <title>Snake Museum — a curated gallery of community snake games</title>
   <meta name="description" content="Snake Museum is a curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe. Submit your own via pull request." />
@@ -81,7 +81,7 @@
         },
         "mainEntity": {
           "@type": "ItemList",
-          "numberOfItems": 1,
+          "numberOfItems": 5,
           "itemListElement": [
             {
               "@type": "ListItem",
@@ -104,6 +104,94 @@
                 },
                 "keywords": "classic, arcade, canvas, keyboard, reference"
               }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "url": "https://snakemuseum.dev/games/deep-ocean/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Deep Ocean",
+                "url": "https://snakemuseum.dev/games/deep-ocean/",
+                "description": "A sky-blue sea snake gliding after golden bubbles through a deep navy grid. The house engine, ocean edition.",
+                "image": "https://snakemuseum.dev/games/deep-ocean/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "ocean, blue"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "url": "https://snakemuseum.dev/games/monochrome/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Monochrome",
+                "url": "https://snakemuseum.dev/games/monochrome/",
+                "description": "Grayscale minimalism: a silver snake and a pale pellet on near-black. No color, no distractions, just you and the grid.",
+                "image": "https://snakemuseum.dev/games/monochrome/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "minimal, mono"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "url": "https://snakemuseum.dev/games/neon-nibbler/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Neon Nibbler",
+                "url": "https://snakemuseum.dev/games/neon-nibbler/",
+                "description": "A synthwave repaint of the house engine: a glowing violet snake chasing cyan pellets across a midnight grid. Same classic rules, arrow keys or WASD, vaporwave mood.",
+                "image": "https://snakemuseum.dev/games/neon-nibbler/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "neon, synthwave"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "url": "https://snakemuseum.dev/games/sunset-serpent/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Sunset Serpent",
+                "url": "https://snakemuseum.dev/games/sunset-serpent/",
+                "description": "The classic engine in a warm dusk palette: an amber snake and a rose-red apple over a toasted-cocoa board. Same rules, slower burn.",
+                "image": "https://snakemuseum.dev/games/sunset-serpent/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "warm, chill"
+              }
             }
           ]
         }
@@ -123,10 +211,7 @@
             <circle cx="18.5" cy="10" r="1.6" fill="currentColor" stroke="none" />
           </svg>
         </span>
-        <div class="brand-text">
-          <h1 class="brand-title">Snake Museum</h1>
-          <span class="brand-sub">A curated gallery of community-submitted snake games</span>
-        </div>
+        <span class="brand-word">Snake Museum</span>
       </a>
       <nav class="masthead-links" aria-label="Primary">
         <a class="ghost-btn" href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">GitHub</a>
@@ -135,7 +220,41 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-inner">
+      <span class="hero-badge">snakemuseum.dev</span>
+      <h1 id="hero-title" class="hero-title">The <span class="hero-accent">Snake</span> Museum</h1>
+      <p class="hero-tagline">
+        The snake game is the world's most-built programming demo. The Snake Museum
+        is a community gallery of them — every exhibit is submitted by the community
+        and plays right here inside a locked-down sandbox. Wander in, play a few,
+        then add your own.
+      </p>
+      <div class="hero-cta">
+        <a class="btn-primary" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">
+          Submit your snake
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14" />
+            <path d="M13 6l6 6-6 6" />
+          </svg>
+        </a>
+        <a class="btn-secondary" href="#gallery">Browse the gallery</a>
+      </div>
+      <ul class="hero-stats" aria-label="At a glance">
+        <li class="stat"><b id="stat-count">5</b><span>Exhibits</span></li>
+        <li class="stat"><b>100%</b><span>Sandboxed</span></li>
+        <li class="stat"><b>0</b><span>Backends</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <main id="gallery" class="wrap">
+    <div class="collection-head">
+      <h2 class="section-title">Now exhibiting</h2>
+      <span class="section-rule" aria-hidden="true"></span>
+      <p class="count" id="count" aria-live="polite"></p>
+    </div>
+
     <section class="toolbar" aria-label="Filter games">
       <div class="search">
         <label class="visually-hidden" for="search">Search games</label>
@@ -144,19 +263,12 @@
       <div class="tagbar" id="tagbar" role="group" aria-label="Filter by tag"></div>
     </section>
 
-    <section class="collection" aria-labelledby="collection-title">
-      <div class="collection-head">
-        <h2 id="collection-title" class="section-title">The Collection</h2>
-        <p class="count" id="count" aria-live="polite"></p>
-      </div>
+    <div id="gallery-grid" class="gallery"></div>
 
-      <div id="gallery" class="gallery"></div>
-
-      <p id="empty" class="empty" hidden>
-        No games match your filter yet. Clear the search — or
-        <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">submit the first one</a>.
-      </p>
-    </section>
+    <p id="empty" class="empty" hidden>
+      No games match your filter yet. Clear the search — or
+      <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">submit the first one</a>.
+    </p>
   </main>
 
   <footer class="site-foot">
@@ -207,6 +319,16 @@
         </div>
       </header>
       <div class="modal-stage" id="modal-stage"></div>
+      <p class="modal-note">
+        <span class="modal-lock" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+        </span>
+        Running in an isolated sandbox (<code>allow-scripts</code>, opaque origin).
+        This exhibit can't read the museum's page, cookies, or storage.
+      </p>
     </div>
   </div>
 

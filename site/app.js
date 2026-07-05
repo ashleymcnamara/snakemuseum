@@ -8,11 +8,12 @@
 // or DOM. No secrets are ever passed into the frame.
 const GAME_SANDBOX = "allow-scripts";
 
-const gallery = document.getElementById("gallery");
+const galleryGrid = document.getElementById("gallery-grid");
 const tagbar = document.getElementById("tagbar");
 const searchInput = document.getElementById("search");
 const countEl = document.getElementById("count");
 const emptyEl = document.getElementById("empty");
+const statCountEl = document.getElementById("stat-count");
 
 const modal = document.getElementById("modal");
 const modalBackdrop = document.getElementById("modal-backdrop");
@@ -30,9 +31,9 @@ const FALLBACK_THUMB =
   "data:image/svg+xml," +
   encodeURIComponent(
     "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='200'>" +
-      "<rect width='100%' height='100%' fill='#0e1524'/>" +
-      "<path d='M108 138h36v-30h30v-30h34' fill='none' stroke='#2b3a54' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/>" +
-      "<circle cx='208' cy='78' r='9' fill='#2b3a54'/></svg>"
+      "<rect width='100%' height='100%' fill='#08150f'/>" +
+      "<path d='M108 138h36v-30h30v-30h34' fill='none' stroke='#1c4433' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/>" +
+      "<circle cx='208' cy='78' r='9' fill='#1c4433'/></svg>"
   );
 
 // Constant, monochrome inline-SVG icons (safe to assign as innerHTML — no
@@ -69,9 +70,9 @@ function githubUrl(handle) {
 
 function buildCard(game) {
   const thumb = el("img", {
-    class: "card-thumb",
+    class: "thumb-img",
     src: game.thumbnail || FALLBACK_THUMB,
-    alt: "Gameplay thumbnail for " + game.title,
+    alt: "",
     loading: "lazy",
     decoding: "async",
   });
@@ -79,17 +80,28 @@ function buildCard(game) {
     if (thumb.src !== FALLBACK_THUMB) thumb.src = FALLBACK_THUMB;
   });
 
-  // Always-visible, focusable, tappable play control on the thumbnail — never
-  // a hover-only overlay (hover doesn't exist on touch; keyboard needs focus).
-  const playOverlay = el("button", {
-    class: "card-play",
-    type: "button",
-    "aria-label": "Play " + game.title,
-  });
-  playOverlay.appendChild(iconSpan(ICONS.play, "card-play-badge"));
-  playOverlay.addEventListener("click", () => openGame(game));
+  // Play overlay (scrim + green "Play" pill). Revealed on hover AND keyboard
+  // focus — purely presentational, so it is aria-hidden.
+  const overlay = el("span", { class: "play-overlay", "aria-hidden": "true" }, [
+    el("span", { class: "play-pill" }, [
+      iconSpan(ICONS.play, "play-ico"),
+      el("span", { text: "Play" }),
+    ]),
+  ]);
 
-  const frame = el("div", { class: "card-frame" }, [thumb, playOverlay]);
+  // The whole 16:10 thumbnail is a real, focusable, tappable button — not a
+  // hover-only overlay. Its aria-label is the accessible name, so the
+  // decorative <img> uses alt="" to avoid a double announcement.
+  const playBtn = el(
+    "button",
+    {
+      class: "thumb",
+      type: "button",
+      "aria-label": "Play " + game.title + " — a snake game by " + game.author,
+    },
+    [thumb, overlay]
+  );
+  playBtn.addEventListener("click", () => openGame(game));
 
   const authorLink = el("a", {
     text: "@" + game.githubHandle,
@@ -97,7 +109,7 @@ function buildCard(game) {
     rel: "noopener noreferrer",
   });
   const author = el("p", { class: "card-author" }, [
-    document.createTextNode("by " + game.author + " · "),
+    document.createTextNode("by "),
     authorLink,
   ]);
 
@@ -106,21 +118,14 @@ function buildCard(game) {
     ? el("ul", { class: "card-tags", "aria-label": "Tags" }, tagItems)
     : null;
 
-  const cta = el("button", { class: "card-cta", type: "button" }, [
-    iconSpan(ICONS.play, "cta-ico"),
-    el("span", { text: "Play game" }),
-  ]);
-  cta.addEventListener("click", () => openGame(game));
-
   const body = el("div", { class: "card-body" }, [
     el("h3", { class: "card-title", text: game.title }),
     author,
     el("p", { class: "card-desc", text: game.description }),
     tags,
-    cta,
   ]);
 
-  return el("article", { class: "card" }, [frame, body]);
+  return el("article", { class: "card" }, [playBtn, body]);
 }
 
 function matches(game) {
@@ -141,7 +146,7 @@ function matches(game) {
 
 function render() {
   const visible = state.games.filter(matches);
-  gallery.replaceChildren(...visible.map(buildCard));
+  galleryGrid.replaceChildren(...visible.map(buildCard));
 
   emptyEl.hidden = visible.length !== 0;
   const total = state.games.length;
@@ -233,6 +238,7 @@ async function boot() {
     return;
   }
   buildTagbar();
+  if (statCountEl) statCountEl.textContent = String(state.games.length);
   render();
 }
 
