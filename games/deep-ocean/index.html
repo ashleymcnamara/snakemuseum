@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="color-scheme" content="dark" />
-  <title>Deep Ocean — Snake Museum</title>
+  <title>Reef Run — Snake Museum</title>
   <style>
     :root {
       --bg: #04121f;
@@ -164,11 +164,15 @@
       font-size: 0.82rem;
     }
     .hint .grp { display: inline-flex; align-items: center; gap: 6px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .overlay { transition: none; }
+    }
   </style>
 </head>
 <body>
   <div class="hud">
-    <div class="title"><span class="dot"></span> Deep Ocean</div>
+    <div class="title"><span class="dot"></span> Reef Run</div>
     <div class="scores">
       <div class="score-box">
         <div class="label">Score</div>
@@ -182,10 +186,10 @@
   </div>
 
   <div class="board">
-    <canvas id="game" aria-label="Snake game board" role="img"></canvas>
+    <canvas id="game" aria-label="Reef Run snake board" role="img"></canvas>
     <div class="overlay" id="overlay" aria-live="polite">
-      <h1 id="ov-title">Deep Ocean</h1>
-      <p id="ov-text">Eat the golden bubbles, grow the snake, don't hit the walls or yourself.</p>
+      <h1 id="ov-title">Reef Run</h1>
+      <p id="ov-text">Weave the sea snake around the coral to reach the golden bubbles. Rocks, walls, and your own tail are lethal. Watch for the current: a shimmer warns before it nudges you sideways. Arrow keys or WASD.</p>
       <button class="btn" id="ov-btn" type="button">Play</button>
     </div>
   </div>
@@ -201,9 +205,10 @@
     (function () {
       const COLS = 21;
       const ROWS = 21;
-      const BASE_SPEED = 150;   // ms per step at score 0
-      const MIN_SPEED = 70;     // fastest step interval
-      const SPEED_STEP = 4;     // ms shaved off per apple
+      const BASE_SPEED = 150;
+      const OBSTACLE_COUNT = 8;
+      const CURRENT_INTERVAL = 5200; // ms between currents
+      const TELEGRAPH = 1200;        // ms of warning shimmer before a current
 
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
@@ -232,23 +237,27 @@
         tail: hexToRgb(cssVar("--snake-dark")),
         near: hexToRgb(cssVar("--snake")),
       };
+      const ROCK = "#274a5e";
+      const ROCK_HI = "#3a6076";
+      const FOAM = PAL.head;
 
-      let cell = 20;          // pixel size of a grid cell (CSS px)
-      let snake, dir, nextDir, food, score, best, speed, state, lastStep, raf;
+      let cell = 20;
+      let snake, dir, nextDir, food, obstacles, score, best, speed, state, lastStep, raf;
+      let nextCurrentAt, telegraphDir, currentDir;
 
       best = loadBest();
       bestEl.textContent = String(best);
 
       function loadBest() {
         try {
-          const v = window.localStorage.getItem("deep-ocean-best");
+          const v = window.localStorage.getItem("reef-run-best");
           return v ? parseInt(v, 10) || 0 : 0;
         } catch (e) {
           return 0; // sandboxed opaque origin: storage is blocked, keep it in memory
         }
       }
       function saveBest(v) {
-        try { window.localStorage.setItem("deep-ocean-best", String(v)); } catch (e) { /* ignore */ }
+        try { window.localStorage.setItem("reef-run-best", String(v)); } catch (e) { /* ignore */ }
       }
 
       function fitCanvas() {
@@ -259,6 +268,26 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         cell = rect.width / COLS;
         draw();
+      }
+
+      // Keep the snake's start row and its runway ahead clear of coral.
+      function isSafeStart(x, y) {
+        const cx = Math.floor(COLS / 2);
+        const cy = Math.floor(ROWS / 2);
+        return Math.abs(y - cy) <= 1 && x >= cx - 3 && x <= cx + 8;
+      }
+
+      function generateObstacles() {
+        obstacles = [];
+        let attempts = 0;
+        while (obstacles.length < OBSTACLE_COUNT && attempts < 500) {
+          attempts++;
+          const x = 1 + Math.floor(Math.random() * (COLS - 2));
+          const y = 1 + Math.floor(Math.random() * (ROWS - 2));
+          if (isSafeStart(x, y)) continue;
+          if (obstacles.some((o) => o.x === x && o.y === y)) continue;
+          obstacles.push({ x, y });
+        }
       }
 
       function reset() {
@@ -274,14 +303,24 @@
         score = 0;
         speed = BASE_SPEED;
         scoreEl.textContent = "0";
+        generateObstacles();
         placeFood();
+        nextCurrentAt = performance.now() + CURRENT_INTERVAL;
+        telegraphDir = null;
+        currentDir = null;
+      }
+
+      function occupied(x, y) {
+        if (snake && snake.some((s) => s.x === x && s.y === y)) return true;
+        if (obstacles && obstacles.some((o) => o.x === x && o.y === y)) return true;
+        return false;
       }
 
       function placeFood() {
         const free = [];
         for (let y = 0; y < ROWS; y++) {
           for (let x = 0; x < COLS; x++) {
-            if (!snake.some((s) => s.x === x && s.y === y)) free.push({ x, y });
+            if (!occupied(x, y)) free.push({ x, y });
           }
         }
         food = free.length ? free[Math.floor(Math.random() * free.length)] : null;
@@ -302,50 +341,91 @@
           bestEl.textContent = String(best);
           saveBest(best);
         }
-        showOverlay("Game Over", "Score: " + score + " · Best: " + best, "Play again");
+        showOverlay("Game Over", "Score: " + score + " \u00b7 Best: " + best, "Play again");
         draw();
       }
 
       function togglePause() {
         if (state === "running") {
           state = "paused";
-          showOverlay("Paused", "Take a breath. The golden bubbles aren't going anywhere.", "Resume");
+          showOverlay("Paused", "The tide waits. So does the coral.", "Resume");
         } else if (state === "paused") {
           state = "running";
+          // don't let a current fire the instant we resume
+          nextCurrentAt = performance.now() + Math.max(TELEGRAPH, CURRENT_INTERVAL / 2);
+          telegraphDir = null;
           hideOverlay();
           lastStep = performance.now();
           loop(lastStep);
         }
       }
 
-      function step() {
-        dir = nextDir;
-        const head = { x: snake[snake.length - 1].x + dir.x, y: snake[snake.length - 1].y + dir.y };
+      // Move the head one cell by (mx,my); returns false if the move was fatal.
+      function advance(mx, my) {
+        const prev = snake[snake.length - 1];
+        const head = { x: prev.x + mx, y: prev.y + my };
 
         const hitWall = head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS;
+        const hitRock = obstacles.some((o) => o.x === head.x && o.y === head.y);
         const hitSelf = snake.some((s) => s.x === head.x && s.y === head.y);
-        if (hitWall || hitSelf) { gameOver(); return; }
+        if (hitWall || hitRock || hitSelf) { gameOver(); return false; }
 
         snake.push(head);
-
         if (food && head.x === food.x && head.y === food.y) {
           score += 10;
           scoreEl.textContent = String(score);
-          speed = Math.max(MIN_SPEED, BASE_SPEED - (score / 10) * SPEED_STEP);
           placeFood();
         } else {
           snake.shift();
+        }
+        return true;
+      }
+
+      function perpendicular() {
+        // a direction at 90deg to the current heading (a lateral drift)
+        return dir.x !== 0 ? { x: 0, y: Math.random() < 0.5 ? -1 : 1 }
+                           : { x: Math.random() < 0.5 ? -1 : 1, y: 0 };
+      }
+
+      function step() {
+        dir = nextDir;
+        const now = performance.now();
+        const fireCurrent = now >= nextCurrentAt;
+
+        if (!advance(dir.x, dir.y)) return;
+
+        if (fireCurrent) {
+          const drift = telegraphDir || perpendicular();
+          nextCurrentAt = now + CURRENT_INTERVAL;
+          telegraphDir = null;
+          // never shove the head straight back into its own neck
+          if (!(drift.x === -dir.x && drift.y === -dir.y)) {
+            currentDir = drift;
+            advance(drift.x, drift.y);
+          }
+        }
+      }
+
+      function updateTelegraph(now) {
+        const untilFire = nextCurrentAt - now;
+        if (untilFire <= TELEGRAPH && untilFire > 0) {
+          if (!telegraphDir) telegraphDir = perpendicular();
+        } else if (untilFire > TELEGRAPH) {
+          telegraphDir = null;
         }
       }
 
       function loop(now) {
         if (state !== "running") return;
         raf = window.requestAnimationFrame(loop);
+        updateTelegraph(now);
         if (now - lastStep >= speed) {
           lastStep = now;
           step();
-          draw();
+          if (state !== "running") return;
         }
+        draw();
+        drawCurrent(now);
       }
 
       function roundRect(x, y, w, h, r) {
@@ -357,6 +437,48 @@
         ctx.arcTo(x, y + h, x, y, rr);
         ctx.arcTo(x, y, x + w, y, rr);
         ctx.closePath();
+      }
+
+      function drawChevron(x, y, ang, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.4, -size * 0.5);
+        ctx.lineTo(size * 0.45, 0);
+        ctx.lineTo(-size * 0.4, size * 0.5);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Faint directional shimmer that telegraphs an incoming current.
+      function drawCurrent(now) {
+        if (!telegraphDir) return;
+        const untilFire = nextCurrentAt - now;
+        if (untilFire <= 0 || untilFire > TELEGRAPH) return;
+        const inten = 1 - untilFire / TELEGRAPH;
+        const W = COLS * cell;
+        const H = ROWS * cell;
+        const dx = telegraphDir.x;
+        const dy = telegraphDir.y;
+        const ang = Math.atan2(dy, dx);
+        const drift = Math.sin(now / 260) * cell * 0.18;
+        const gap = cell * 1.5;
+        const size = cell * 1.0;
+
+        ctx.save();
+        ctx.strokeStyle = FOAM;
+        ctx.lineWidth = Math.max(2, cell * 0.16);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        for (let k = 0; k < 3; k++) {
+          const off = (k - 1) * gap + drift;
+          const bx = W / 2 + dx * off;
+          const by = H / 2 + dy * off;
+          ctx.globalAlpha = (0.12 + 0.26 * inten) * (1 - Math.abs(k - 1) * 0.22);
+          drawChevron(bx, by, ang, size);
+        }
+        ctx.restore();
       }
 
       function draw() {
@@ -374,7 +496,23 @@
           ctx.beginPath(); ctx.moveTo(0, j * cell); ctx.lineTo(W, j * cell); ctx.stroke();
         }
 
-        // food
+        // coral / rock obstacles
+        if (obstacles) {
+          const pad = cell * 0.1;
+          for (const o of obstacles) {
+            const x = o.x * cell + pad;
+            const y = o.y * cell + pad;
+            const size = cell - pad * 2;
+            ctx.fillStyle = ROCK;
+            roundRect(x, y, size, size, cell * 0.22);
+            ctx.fill();
+            ctx.fillStyle = ROCK_HI;
+            roundRect(x + size * 0.16, y + size * 0.14, size * 0.42, size * 0.34, cell * 0.14);
+            ctx.fill();
+          }
+        }
+
+        // food (golden bubble)
         if (food) {
           const fx = food.x * cell + cell / 2;
           const fy = food.y * cell + cell / 2;
@@ -385,6 +523,10 @@
           ctx.fillStyle = grad;
           ctx.beginPath();
           ctx.arc(fx, fy, rad, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.beginPath();
+          ctx.arc(fx - rad * 0.32, fy - rad * 0.34, rad * 0.22, 0, Math.PI * 2);
           ctx.fill();
         }
 

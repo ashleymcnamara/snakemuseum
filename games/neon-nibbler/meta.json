@@ -1,8 +1,8 @@
 {
-  "title": "Neon Nibbler",
+  "title": "Combo Rush",
   "author": "Ashley McNamara",
   "githubHandle": "ashleymcnamara",
-  "description": "A synthwave repaint of the house engine: a glowing violet snake chasing cyan pellets across a midnight grid. Same classic rules, arrow keys or WASD, vaporwave mood.",
+  "description": "A synthwave twist on the house engine: the snake accelerates as it grows, and chaining pellets before the combo meter empties stacks a scoring multiplier. Neon glow, punchy arcade pace, arrow keys or WASD.",
   "createdAt": "2026-07-04",
-  "tags": ["neon", "synthwave"]
+  "tags": ["combo", "arcade", "neon"]
 }

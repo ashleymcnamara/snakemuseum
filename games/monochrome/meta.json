@@ -1,8 +1,8 @@
 {
-  "title": "Monochrome",
+  "title": "Portals",
   "author": "Ashley McNamara",
   "githubHandle": "ashleymcnamara",
-  "description": "Grayscale minimalism: a silver snake and a pale pellet on near-black. No color, no distractions, just you and the grid.",
+  "description": "A stark, grid-free take on the house engine in pure grayscale. Two linked portal pairs bend the board: enter a ring and reappear at its twin, direction intact. Lots of negative space, walls and tail lethal. Gateways reposition every game.",
   "createdAt": "2026-07-04",
-  "tags": ["minimal", "mono"]
+  "tags": ["portals", "teleport", "minimal"]
 }

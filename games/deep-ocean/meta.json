@@ -1,8 +1,8 @@
 {
-  "title": "Deep Ocean",
+  "title": "Reef Run",
   "author": "Ashley McNamara",
   "githubHandle": "ashleymcnamara",
-  "description": "A sky-blue sea snake gliding after golden bubbles through a deep navy grid. The house engine, ocean edition.",
+  "description": "An ocean take on the house engine: weave the sea snake around a scattered coral reef to reach golden bubbles. Rocks are regenerated every game, and a gentle current periodically nudges you sideways after a shimmer warning. Walls, coral, and your own tail all end the run.",
   "createdAt": "2026-07-04",
-  "tags": ["ocean", "blue"]
+  "tags": ["ocean", "obstacles", "current"]
 }

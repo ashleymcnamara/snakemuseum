@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="color-scheme" content="dark" />
-  <title>Monochrome — Snake Museum</title>
+  <title>Portals — Snake Museum</title>
   <style>
     :root {
       --bg: #0b0b0b;
@@ -164,11 +164,15 @@
       font-size: 0.82rem;
     }
     .hint .grp { display: inline-flex; align-items: center; gap: 6px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .overlay { transition: none; }
+    }
   </style>
 </head>
 <body>
   <div class="hud">
-    <div class="title"><span class="dot"></span> Monochrome</div>
+    <div class="title"><span class="dot"></span> Portals</div>
     <div class="scores">
       <div class="score-box">
         <div class="label">Score</div>
@@ -182,10 +186,10 @@
   </div>
 
   <div class="board">
-    <canvas id="game" aria-label="Snake game board" role="img"></canvas>
+    <canvas id="game" aria-label="Portals snake board" role="img"></canvas>
     <div class="overlay" id="overlay" aria-live="polite">
-      <h1 id="ov-title">Monochrome</h1>
-      <p id="ov-text">Eat the pale pellets, grow the snake, don't hit the walls or yourself.</p>
+      <h1 id="ov-title">Portals</h1>
+      <p id="ov-text">Two linked gateways bend the board. Slip into a ring and reappear at its twin, still moving the same way. Walls and your own tail are lethal. Arrow keys or WASD.</p>
       <button class="btn" id="ov-btn" type="button">Play</button>
     </div>
   </div>
@@ -201,9 +205,7 @@
     (function () {
       const COLS = 21;
       const ROWS = 21;
-      const BASE_SPEED = 150;   // ms per step at score 0
-      const MIN_SPEED = 70;     // fastest step interval
-      const SPEED_STEP = 4;     // ms shaved off per apple
+      const BASE_SPEED = 150;
 
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
@@ -224,7 +226,6 @@
         return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
       }
       const PAL = {
-        grid: cssVar("--grid-line"),
         food: cssVar("--food"),
         foodHi: cssVar("--food-hi"),
         head: cssVar("--head"),
@@ -232,23 +233,28 @@
         tail: hexToRgb(cssVar("--snake-dark")),
         near: hexToRgb(cssVar("--snake")),
       };
+      // two subtle gray tones — one per linked portal pair
+      const PORTALS_STYLE = [
+        { ring: "#8a8a8a", inner: "#3a3a3a" },
+        { ring: "#bdbdbd", inner: "#4c4c4c" },
+      ];
 
-      let cell = 20;          // pixel size of a grid cell (CSS px)
-      let snake, dir, nextDir, food, score, best, speed, state, lastStep, raf;
+      let cell = 20;
+      let snake, dir, nextDir, food, portals, score, best, speed, state, lastStep, raf;
 
       best = loadBest();
       bestEl.textContent = String(best);
 
       function loadBest() {
         try {
-          const v = window.localStorage.getItem("monochrome-best");
+          const v = window.localStorage.getItem("portals-best");
           return v ? parseInt(v, 10) || 0 : 0;
         } catch (e) {
           return 0; // sandboxed opaque origin: storage is blocked, keep it in memory
         }
       }
       function saveBest(v) {
-        try { window.localStorage.setItem("monochrome-best", String(v)); } catch (e) { /* ignore */ }
+        try { window.localStorage.setItem("portals-best", String(v)); } catch (e) { /* ignore */ }
       }
 
       function fitCanvas() {
@@ -259,6 +265,56 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         cell = rect.width / COLS;
         draw();
+      }
+
+      // Keep the snake's start row and its runway ahead clear of portals.
+      function isSafeStart(x, y) {
+        const cx = Math.floor(COLS / 2);
+        const cy = Math.floor(ROWS / 2);
+        return Math.abs(y - cy) <= 1 && x >= cx - 3 && x <= cx + 8;
+      }
+
+      function generatePortals() {
+        const cells = [];
+        const farEnough = (x, y, minSep) =>
+          !cells.some((c) => Math.max(Math.abs(c.x - x), Math.abs(c.y - y)) < minSep);
+        let attempts = 0;
+        while (cells.length < 4 && attempts < 900) {
+          attempts++;
+          const x = 1 + Math.floor(Math.random() * (COLS - 2));
+          const y = 1 + Math.floor(Math.random() * (ROWS - 2));
+          if (isSafeStart(x, y)) continue;
+          if (!farEnough(x, y, 3)) continue;
+          cells.push({ x, y });
+        }
+        // fallback: top up distinct, non-start cells if separation was too strict
+        while (cells.length < 4) {
+          const x = 1 + Math.floor(Math.random() * (COLS - 2));
+          const y = 1 + Math.floor(Math.random() * (ROWS - 2));
+          if (isSafeStart(x, y)) continue;
+          if (!farEnough(x, y, 1)) continue;
+          cells.push({ x, y });
+        }
+        portals = [
+          { a: cells[0], b: cells[1], style: PORTALS_STYLE[0] },
+          { a: cells[2], b: cells[3], style: PORTALS_STYLE[1] },
+        ];
+      }
+
+      function portalExit(x, y) {
+        for (const p of portals) {
+          if (p.a.x === x && p.a.y === y) return p.b;
+          if (p.b.x === x && p.b.y === y) return p.a;
+        }
+        return null;
+      }
+
+      function occupied(x, y) {
+        if (snake && snake.some((s) => s.x === x && s.y === y)) return true;
+        for (const p of portals) {
+          if ((p.a.x === x && p.a.y === y) || (p.b.x === x && p.b.y === y)) return true;
+        }
+        return false;
       }
 
       function reset() {
@@ -274,6 +330,7 @@
         score = 0;
         speed = BASE_SPEED;
         scoreEl.textContent = "0";
+        generatePortals();
         placeFood();
       }
 
@@ -281,7 +338,7 @@
         const free = [];
         for (let y = 0; y < ROWS; y++) {
           for (let x = 0; x < COLS; x++) {
-            if (!snake.some((s) => s.x === x && s.y === y)) free.push({ x, y });
+            if (!occupied(x, y)) free.push({ x, y });
           }
         }
         food = free.length ? free[Math.floor(Math.random() * free.length)] : null;
@@ -302,14 +359,14 @@
           bestEl.textContent = String(best);
           saveBest(best);
         }
-        showOverlay("Game Over", "Score: " + score + " · Best: " + best, "Play again");
+        showOverlay("Game Over", "Score: " + score + " \u00b7 Best: " + best, "Play again");
         draw();
       }
 
       function togglePause() {
         if (state === "running") {
           state = "paused";
-          showOverlay("Paused", "Take a breath. The pale pellets aren't going anywhere.", "Resume");
+          showOverlay("Paused", "The gateways hold their positions.", "Resume");
         } else if (state === "paused") {
           state = "running";
           hideOverlay();
@@ -320,18 +377,26 @@
 
       function step() {
         dir = nextDir;
-        const head = { x: snake[snake.length - 1].x + dir.x, y: snake[snake.length - 1].y + dir.y };
+        const neck = snake[snake.length - 1];
+        let hx = neck.x + dir.x;
+        let hy = neck.y + dir.y;
 
-        const hitWall = head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS;
+        // walls are lethal
+        if (hx < 0 || hy < 0 || hx >= COLS || hy >= ROWS) { gameOver(); return; }
+
+        // a portal sends the head to its twin, direction preserved
+        const exit = portalExit(hx, hy);
+        if (exit) { hx = exit.x; hy = exit.y; }
+
+        const head = { x: hx, y: hy };
         const hitSelf = snake.some((s) => s.x === head.x && s.y === head.y);
-        if (hitWall || hitSelf) { gameOver(); return; }
+        if (hitSelf) { gameOver(); return; }
 
         snake.push(head);
 
         if (food && head.x === food.x && head.y === food.y) {
           score += 10;
           scoreEl.textContent = String(score);
-          speed = Math.max(MIN_SPEED, BASE_SPEED - (score / 10) * SPEED_STEP);
           placeFood();
         } else {
           snake.shift();
@@ -359,19 +424,32 @@
         ctx.closePath();
       }
 
+      function drawPortal(col, row, style) {
+        const cx = col * cell + cell / 2;
+        const cy = row * cell + cell / 2;
+        ctx.lineWidth = Math.max(2, cell * 0.13);
+        ctx.strokeStyle = style.ring;
+        ctx.beginPath();
+        ctx.arc(cx, cy, cell * 0.34, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = style.inner;
+        ctx.beginPath();
+        ctx.arc(cx, cy, cell * 0.18, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
       function draw() {
         const W = COLS * cell;
         const H = ROWS * cell;
+        // No grid, no clutter — just negative space.
         ctx.clearRect(0, 0, W, H);
 
-        // grid
-        ctx.strokeStyle = PAL.grid;
-        ctx.lineWidth = 1;
-        for (let i = 1; i < COLS; i++) {
-          ctx.beginPath(); ctx.moveTo(i * cell, 0); ctx.lineTo(i * cell, H); ctx.stroke();
-        }
-        for (let j = 1; j < ROWS; j++) {
-          ctx.beginPath(); ctx.moveTo(0, j * cell); ctx.lineTo(W, j * cell); ctx.stroke();
+        // portals (drawn beneath the snake)
+        if (portals) {
+          for (const p of portals) {
+            drawPortal(p.a.x, p.a.y, p.style);
+            drawPortal(p.b.x, p.b.y, p.style);
+          }
         }
 
         // food

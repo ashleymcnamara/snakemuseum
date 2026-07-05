@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="color-scheme" content="dark" />
-  <title>Sunset Serpent — Snake Museum</title>
+  <title>Zen Wrap — Snake Museum</title>
   <style>
     :root {
       --bg: #1a0d08;
@@ -98,6 +98,7 @@
       border-radius: 18px;
       box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
       overflow: hidden;
+      transition: background 0.8s ease;
     }
 
     canvas { display: block; width: 100%; height: 100%; }
@@ -164,11 +165,15 @@
       font-size: 0.82rem;
     }
     .hint .grp { display: inline-flex; align-items: center; gap: 6px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .board, .overlay { transition: none; }
+    }
   </style>
 </head>
 <body>
   <div class="hud">
-    <div class="title"><span class="dot"></span> Sunset Serpent</div>
+    <div class="title"><span class="dot"></span> Zen Wrap</div>
     <div class="scores">
       <div class="score-box">
         <div class="label">Score</div>
@@ -182,10 +187,10 @@
   </div>
 
   <div class="board">
-    <canvas id="game" aria-label="Snake game board" role="img"></canvas>
+    <canvas id="game" aria-label="Zen Wrap snake board" role="img"></canvas>
     <div class="overlay" id="overlay" aria-live="polite">
-      <h1 id="ov-title">Sunset Serpent</h1>
-      <p id="ov-text">Eat the rosy fruit, grow the snake, don't hit the walls or yourself.</p>
+      <h1 id="ov-title">Zen Wrap</h1>
+      <p id="ov-text">No walls here. Glide through the edges and reappear on the far side; only your own tail can end the run. A calm, steady pace. Arrow keys or WASD.</p>
       <button class="btn" id="ov-btn" type="button">Play</button>
     </div>
   </div>
@@ -201,12 +206,19 @@
     (function () {
       const COLS = 21;
       const ROWS = 21;
-      const BASE_SPEED = 150;   // ms per step at score 0
-      const MIN_SPEED = 70;     // fastest step interval
-      const SPEED_STEP = 4;     // ms shaved off per apple
+      const CALM_SPEED = 170;   // ms per step — steady, never accelerates
+
+      // Ambient board tint interpolates from warm dusk toward deep night as the
+      // score climbs. Purely cosmetic; the pace stays calm the whole way.
+      const DUSK_TOP = [58, 32, 15];
+      const DUSK_BOTTOM = [21, 10, 6];
+      const NIGHT_TOP = [20, 10, 5];
+      const NIGHT_BOTTOM = [4, 2, 1];
+      const AMBIENT_FULL = 300; // score at which night fully sets in
 
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
+      const board = document.querySelector(".board");
       const scoreEl = document.getElementById("score");
       const bestEl = document.getElementById("best");
       const overlay = document.getElementById("overlay");
@@ -223,6 +235,7 @@
         if (h.length === 3) h = h.split("").map((ch) => ch + ch).join("");
         return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
       }
+      const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
       const PAL = {
         grid: cssVar("--grid-line"),
         food: cssVar("--food"),
@@ -233,7 +246,7 @@
         near: hexToRgb(cssVar("--snake")),
       };
 
-      let cell = 20;          // pixel size of a grid cell (CSS px)
+      let cell = 20;
       let snake, dir, nextDir, food, score, best, speed, state, lastStep, raf;
 
       best = loadBest();
@@ -241,14 +254,22 @@
 
       function loadBest() {
         try {
-          const v = window.localStorage.getItem("sunset-serpent-best");
+          const v = window.localStorage.getItem("zen-wrap-best");
           return v ? parseInt(v, 10) || 0 : 0;
         } catch (e) {
           return 0; // sandboxed opaque origin: storage is blocked, keep it in memory
         }
       }
       function saveBest(v) {
-        try { window.localStorage.setItem("sunset-serpent-best", String(v)); } catch (e) { /* ignore */ }
+        try { window.localStorage.setItem("zen-wrap-best", String(v)); } catch (e) { /* ignore */ }
+      }
+
+      function updateAmbient() {
+        const t = Math.min(1, score / AMBIENT_FULL);
+        const top = mix(DUSK_TOP, NIGHT_TOP, t);
+        const bot = mix(DUSK_BOTTOM, NIGHT_BOTTOM, t);
+        board.style.background =
+          "linear-gradient(160deg, rgb(" + top.join(",") + "), rgb(" + bot.join(",") + "))";
       }
 
       function fitCanvas() {
@@ -272,8 +293,9 @@
         dir = { x: 1, y: 0 };
         nextDir = { x: 1, y: 0 };
         score = 0;
-        speed = BASE_SPEED;
+        speed = CALM_SPEED;
         scoreEl.textContent = "0";
+        updateAmbient();
         placeFood();
       }
 
@@ -302,14 +324,14 @@
           bestEl.textContent = String(best);
           saveBest(best);
         }
-        showOverlay("Game Over", "Score: " + score + " · Best: " + best, "Play again");
+        showOverlay("Game Over", "Score: " + score + " \u00b7 Best: " + best, "Play again");
         draw();
       }
 
       function togglePause() {
         if (state === "running") {
           state = "paused";
-          showOverlay("Paused", "Take a breath. The rosy fruit aren't going anywhere.", "Resume");
+          showOverlay("Paused", "Take a breath. The apple isn't going anywhere.", "Resume");
         } else if (state === "paused") {
           state = "running";
           hideOverlay();
@@ -320,18 +342,22 @@
 
       function step() {
         dir = nextDir;
-        const head = { x: snake[snake.length - 1].x + dir.x, y: snake[snake.length - 1].y + dir.y };
+        // No walls: the board wraps. Exit one edge, enter the opposite one.
+        let hx = snake[snake.length - 1].x + dir.x;
+        let hy = snake[snake.length - 1].y + dir.y;
+        hx = (hx + COLS) % COLS;
+        hy = (hy + ROWS) % ROWS;
+        const head = { x: hx, y: hy };
 
-        const hitWall = head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS;
         const hitSelf = snake.some((s) => s.x === head.x && s.y === head.y);
-        if (hitWall || hitSelf) { gameOver(); return; }
+        if (hitSelf) { gameOver(); return; }
 
         snake.push(head);
 
         if (food && head.x === food.x && head.y === food.y) {
           score += 10;
           scoreEl.textContent = String(score);
-          speed = Math.max(MIN_SPEED, BASE_SPEED - (score / 10) * SPEED_STEP);
+          updateAmbient();
           placeFood();
         } else {
           snake.shift();

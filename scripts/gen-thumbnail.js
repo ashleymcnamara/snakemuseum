@@ -67,6 +67,65 @@ function derivePalette(base) {
   };
 }
 
+function fillRing(c, cx, cy, rOuter, rInner, color, innerColor) {
+  fillCircle(c, cx, cy, rOuter, color);
+  fillCircle(c, cx, cy, rInner, innerColor);
+}
+
+// Optional per-theme hint at the game's mechanic, drawn over the base board.
+// Kept subtle and palette-accurate; classic-snake (no theme) is untouched.
+function decorate(c, theme, base) {
+  const at = (col, row) => [col * CELL + CELL / 2, row * CELL + CELL / 2];
+
+  if (theme === "deep-ocean") {
+    // Reef Run: scattered coral / rock blocks the snake must weave around.
+    const rock = [39, 74, 94];
+    const rockHi = [58, 96, 118];
+    const spots = [[4, 4], [28, 6], [3, 15], [26, 15], [15, 3]];
+    for (const [col, row] of spots) {
+      const x = Math.round(col * CELL + CELL * 0.12);
+      const y = Math.round(row * CELL + CELL * 0.12);
+      const s = Math.round(CELL * 0.76);
+      fillRect(c, x, y, s, s, rock);
+      fillRect(c, x + Math.round(s * 0.16), y + Math.round(s * 0.14), Math.round(s * 0.4), Math.round(s * 0.3), rockHi);
+    }
+  } else if (theme === "monochrome") {
+    // Portals: two linked gateway pairs rendered as rings in two gray tones.
+    const innerBg = [18, 18, 18];
+    const pairs = [
+      { tone: [140, 140, 140], cells: [[5, 4], [27, 15]] },
+      { tone: [190, 190, 190], cells: [[27, 4], [6, 15]] },
+    ];
+    for (const p of pairs) {
+      for (const [col, row] of p.cells) {
+        const [cx, cy] = at(col, row);
+        fillRing(c, cx, cy, CELL * 0.38, CELL * 0.26, p.tone, innerBg);
+        fillCircle(c, cx, cy, CELL * 0.12, p.tone);
+      }
+    }
+  } else if (theme === "sunset-serpent") {
+    // Zen Wrap: the tail continues off one edge and reappears on the other.
+    const bodyColor = mix(base.snake, base.bg, 0.28);
+    const row = 12;
+    for (let col = 0; col <= 3; col++) {
+      const [cx, cy] = at(col, row);
+      fillCircle(c, cx, cy, CELL * 0.38, bodyColor);
+    }
+    for (let col = 29; col <= 31; col++) {
+      const [cx, cy] = at(col, row);
+      fillCircle(c, cx, cy, CELL * 0.38, mix(bodyColor, base.bg, 0.35));
+    }
+  } else if (theme === "neon-nibbler") {
+    // Combo Rush: a soft neon bloom around the pellet.
+    const [fx, fy] = at(24, 8);
+    fillCircle(c, fx, fy, CELL * 0.95, mix(base.bg, base.food, 0.18));
+    fillCircle(c, fx, fy, CELL * 0.7, mix(base.bg, base.food, 0.34));
+    fillCircle(c, fx, fy, CELL * 0.52, mix(base.bg, base.food, 0.55));
+    fillCircle(c, fx, fy, CELL * 0.42, base.food);
+    fillCircle(c, fx - 3, fy - 3, CELL * 0.16, mix(base.food, [255, 255, 255], 0.5));
+  }
+}
+
 export function generateThumbnail(outPath, theme) {
   const pal = theme && THEMES[theme] ? derivePalette(THEMES[theme]) : CLASSIC;
   const c = createCanvas(WIDTH, HEIGHT);
@@ -114,6 +173,8 @@ export function generateThumbnail(outPath, theme) {
   fillCircle(c, head[0], head[1], R, pal.headBright);
   fillCircle(c, head[0] + 4, head[1] - 4, 2.4, pal.eye);
   fillCircle(c, head[0] + 4, head[1] + 4, 2.4, pal.eye);
+
+  if (theme && THEMES[theme]) decorate(c, theme, THEMES[theme]);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, encodePNG(c));
