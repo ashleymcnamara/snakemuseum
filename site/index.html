@@ -24,8 +24,9 @@
   <meta name="author" content="Ashley McNamara" />
   <link rel="canonical" href="https://snakemuseum.dev/" />
 
-  <!-- Monochrome inline-SVG snake favicon (no emoji, no external request). -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%230a0e16%22%2F%3E%3Cpath%20d%3D%22M6%2023h6v-6h6v-6h5%22%20fill%3D%22none%22%20stroke%3D%22%2352e08a%22%20stroke-width%3D%223.4%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2211%22%20r%3D%222.6%22%20fill%3D%22%2352e08a%22%2F%3E%3C%2Fsvg%3E" />
+  <!-- Monochrome vector snake favicon (committed asset + inline data-URI fallback; no emoji, no external request). -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%230a0e16%22%2F%3E%3Cpath%20d%3D%22M6%2023h6v-6h6v-6h5%22%20fill%3D%22none%22%20stroke%3D%22%2352e08a%22%20stroke-width%3D%223.4%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2211%22%20r%3D%222.6%22%20fill%3D%22%2352e08a%22%2F%3E%3C%2Fsvg%3E" />
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Open Graph -->
@@ -174,7 +175,7 @@
         passed in. Submissions are additionally screened by CI and human review.
       </p>
       <p class="foot-meta">
-        Site &amp; tooling under the MIT license · games remain © their authors ·
+        Site &amp; tooling under the MIT license · games remain &copy; their authors ·
         <a href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">source</a>
       </p>
     </div>

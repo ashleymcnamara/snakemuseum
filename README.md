@@ -97,6 +97,7 @@ scripts/
 site/
   index.html           the gallery (strict CSP, full SEO head, no third-party scripts)
   styles.css  app.js   gallery styling + logic
+  favicon.svg          monochrome vector snake favicon
   CNAME                custom domain for GitHub Pages
 .github/
   workflows/validate.yml   validate PRs that touch games/**
