@@ -176,7 +176,7 @@ function validateFolder(dir) {
       for (const { label, re } of DANGER) {
         if (re.test(line)) {
           const snippet = line.trim().slice(0, 80);
-          errors.push(`${relFile}:${i + 1} — ${label}  →  ${snippet}`);
+          errors.push(`${relFile}:${i + 1} - ${label}  ->  ${snippet}`);
         }
       }
     });
@@ -190,25 +190,25 @@ function main() {
   const targets = selectTargets();
 
   if (targets.length === 0) {
-    console.log("No game folders changed — nothing to validate. ✔");
+    console.log("No game folders changed - nothing to validate.");
     return;
   }
 
   console.log(`Validating ${targets.length} submission(s):\n`);
   const results = targets.map(validateFolder);
 
-  const summary = ["# 🐍 Snake Museum submission check\n"];
+  const summary = ["# Snake Museum submission check\n"];
   let failed = 0;
 
   for (const { rel, errors } of results) {
     if (errors.length === 0) {
-      console.log(`✔ ${rel} — all checks passed`);
-      summary.push(`- ✅ **${rel}** — all checks passed`);
+      console.log(`PASS  ${rel} - all checks passed`);
+      summary.push(`- **PASS** \`${rel}\` - all checks passed`);
     } else {
       failed++;
-      console.log(`\n✖ ${rel} — ${errors.length} problem(s):`);
-      for (const e of errors) console.log(`    • ${e}`);
-      summary.push(`- ❌ **${rel}** — ${errors.length} problem(s):`);
+      console.log(`\nFAIL  ${rel} - ${errors.length} problem(s):`);
+      for (const e of errors) console.log(`    - ${e}`);
+      summary.push(`- **FAIL** \`${rel}\` - ${errors.length} problem(s):`);
       for (const e of errors) summary.push(`  - ${e}`);
     }
   }
@@ -223,10 +223,10 @@ function main() {
   }
 
   if (failed > 0) {
-    console.log(`\n✖ ${failed} submission(s) failed validation. See reasons above.`);
+    console.log(`\nFAIL  ${failed} submission(s) failed validation. See reasons above.`);
     process.exit(1);
   }
-  console.log(`\n✔ All ${results.length} submission(s) passed.`);
+  console.log(`\nPASS  All ${results.length} submission(s) passed.`);
 }
 
 main();

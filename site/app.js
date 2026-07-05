@@ -25,13 +25,29 @@ const modalStage = document.getElementById("modal-stage");
 const state = { games: [], search: "", activeTags: new Set() };
 let lastFocused = null;
 
+// Monochrome inline-SVG snake (no emoji) shown if a thumbnail fails to load.
 const FALLBACK_THUMB =
   "data:image/svg+xml," +
   encodeURIComponent(
     "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='200'>" +
       "<rect width='100%' height='100%' fill='#0e1524'/>" +
-      "<text x='50%' y='52%' font-size='64' text-anchor='middle' fill='#233047'>🐍</text></svg>"
+      "<path d='M108 138h36v-30h30v-30h34' fill='none' stroke='#2b3a54' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/>" +
+      "<circle cx='208' cy='78' r='9' fill='#2b3a54'/></svg>"
   );
+
+// Constant, monochrome inline-SVG icons (safe to assign as innerHTML — no
+// scripts, no external requests; keeps the strict CSP clean).
+const ICONS = {
+  play:
+    "<svg class='ico' viewBox='0 0 24 24' aria-hidden='true'>" +
+    "<path d='M8 5v14l11-7z' fill='currentColor'/></svg>",
+};
+
+function iconSpan(svg, className) {
+  const span = el("span", { class: className, "aria-hidden": "true" });
+  span.innerHTML = svg;
+  return span;
+}
 
 function el(tag, props, children) {
   const node = document.createElement(tag);
@@ -55,7 +71,7 @@ function buildCard(game) {
   const thumb = el("img", {
     class: "card-thumb",
     src: game.thumbnail || FALLBACK_THUMB,
-    alt: "Screenshot of " + game.title,
+    alt: "Gameplay thumbnail for " + game.title,
     loading: "lazy",
     decoding: "async",
   });
@@ -63,11 +79,14 @@ function buildCard(game) {
     if (thumb.src !== FALLBACK_THUMB) thumb.src = FALLBACK_THUMB;
   });
 
+  // Always-visible, focusable, tappable play control on the thumbnail — never
+  // a hover-only overlay (hover doesn't exist on touch; keyboard needs focus).
   const playOverlay = el("button", {
     class: "card-play",
     type: "button",
     "aria-label": "Play " + game.title,
-  }, [el("span", { text: "Play" })]);
+  });
+  playOverlay.appendChild(iconSpan(ICONS.play, "card-play-badge"));
   playOverlay.addEventListener("click", () => openGame(game));
 
   const frame = el("div", { class: "card-frame" }, [thumb, playOverlay]);
@@ -82,13 +101,15 @@ function buildCard(game) {
     authorLink,
   ]);
 
-  const tags = el(
-    "div",
-    { class: "card-tags" },
-    (game.tags || []).map((t) => el("span", { class: "card-tag", text: t }))
-  );
+  const tagItems = (game.tags || []).map((t) => el("li", { class: "card-tag", text: t }));
+  const tags = tagItems.length
+    ? el("ul", { class: "card-tags", "aria-label": "Tags" }, tagItems)
+    : null;
 
-  const cta = el("button", { class: "card-cta", type: "button", text: "▶ Play game" });
+  const cta = el("button", { class: "card-cta", type: "button" }, [
+    iconSpan(ICONS.play, "cta-ico"),
+    el("span", { text: "Play game" }),
+  ]);
   cta.addEventListener("click", () => openGame(game));
 
   const body = el("div", { class: "card-body" }, [

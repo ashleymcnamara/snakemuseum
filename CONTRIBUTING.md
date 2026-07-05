@@ -1,4 +1,4 @@
-# Contributing a game to the Snake Museum 🐍
+# Contributing a game to the Snake Museum
 
 Thanks for adding to the collection! Every game in the museum is a small,
 self-contained web game contributed via pull request. This guide walks you
@@ -79,7 +79,7 @@ node scripts/validate-submission.js games/your-game
 
 Open a PR that adds your `games/your-game/` folder. CI runs the exact same
 validation, and a maintainer reviews it. Once merged to `main`, the site
-redeploys automatically and your game appears in the gallery. 🎉
+redeploys automatically and your game appears in the gallery.
 
 ---
 
@@ -88,16 +88,16 @@ redeploys automatically and your game appears in the gallery. 🎉
 Your submission is checked by `scripts/validate-submission.js` (locally and in
 CI). It will **fail with an itemized list of reasons** if any of these aren't met:
 
-### ✅ Required files
+### Required files
 
 - `index.html`, `meta.json`, and `thumbnail.png` must all be present.
 
-### ✅ Valid metadata
+### Valid metadata
 
 - `meta.json` must validate against [`games/schema.json`](games/schema.json)
   (see the table above).
 
-### ✅ Self-contained — no external network
+### Self-contained — no external network
 
 Your game must make **no external requests**. The validator scans `.html`/`.js`
 and rejects, among others:
@@ -106,7 +106,7 @@ and rejects, among others:
 - `<script src="http…">` and `@import url(http…)` (external scripts/styles/CDNs)
 - analytics / tracking of any kind
 
-### ✅ No sandbox-escape or dangerous APIs
+### No sandbox-escape or dangerous APIs
 
 Rejected patterns include:
 
@@ -119,7 +119,7 @@ Rejected patterns include:
 > These would be neutralized by the sandbox anyway, but we reject them up front so
 > the collection stays clean and reviewable.
 
-### ✅ Allowed file types only
+### Allowed file types only
 
 Every file in your folder must be one of:
 
@@ -127,7 +127,7 @@ Every file in your folder must be one of:
 .html  .css  .js  .json  .png  .jpg  .jpeg  .gif  .svg  .webp  .md
 ```
 
-### ✅ Size cap
+### Size cap
 
 - The whole `games/your-game/` folder must be **under 2 MB**. Optimize images;
   don't ship huge assets.
@@ -147,4 +147,4 @@ code** on visitors' browsers. To keep everyone safe:
 - CI + human review are the final gate.
 
 The rules above make submissions easy to review and keep the whole gallery
-trustworthy. Thanks for helping keep the museum a safe, fun place to visit! 🐍
+trustworthy. Thanks for helping keep the museum a safe, fun place to visit!

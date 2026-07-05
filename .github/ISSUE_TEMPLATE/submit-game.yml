@@ -1,4 +1,4 @@
-name: 🐍 Submit a snake game
+name: Submit a snake game
 description: Suggest a snake game for the museum. Pull requests are the primary path — this form is a friendly fallback.
 title: "[Game] <your game title>"
 labels: ["submission"]
@@ -6,9 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for wanting to add to the **Snake Museum**! 🐍
+        Thanks for wanting to add to the **Snake Museum**!
 
-        ⚠️ **The primary way to submit is a Pull Request** — it's the only path that
+        **The primary way to submit is a Pull Request** — it's the only path that
         actually gets your game into the gallery, because every submission is
         validated by CI and played inside a sandboxed iframe. Please read
         [CONTRIBUTING.md](https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md)

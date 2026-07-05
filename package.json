@@ -17,6 +17,7 @@
     "build": "node scripts/build.js",
     "validate": "node scripts/validate-submission.js",
     "thumbnail": "node scripts/gen-thumbnail.js",
+    "og-image": "node scripts/gen-og-image.js",
     "serve": "node scripts/serve.js",
     "start": "npm run build && npm run serve"
   }

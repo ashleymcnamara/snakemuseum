@@ -50,7 +50,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Snake Museum preview → http://localhost:${port}`);
+  console.log(`Snake Museum preview -> http://localhost:${port}`);
   console.log(`Serving ${root}`);
   console.log("Press Ctrl+C to stop.");
 });

@@ -9,27 +9,124 @@
     Everything the gallery loads is same-origin: our own app.js / styles.css,
     the generated games.json, thumbnails, and the game iframes (frame-src 'self').
     No 'unsafe-inline' anywhere — all script and style live in local files.
+    (The JSON-LD block below is type="application/ld+json"; it is DATA, never
+    executed, so it is not affected by script-src.)
   -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; manifest-src 'self'" />
   <meta name="referrer" content="no-referrer" />
   <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0a0e16" />
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='88'%3E%F0%9F%90%8D%3C/text%3E%3C/svg%3E" />
+  <title>Snake Museum — a curated gallery of community snake games</title>
+  <meta name="description" content="Snake Museum is a curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe. Submit your own via pull request." />
+  <meta name="keywords" content="snake game, snake games, retro games, arcade games, browser games, html5 games, open source games, game gallery, github pages, community" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Ashley McNamara" />
+  <link rel="canonical" href="https://snakemuseum.dev/" />
+
+  <!-- Monochrome inline-SVG snake favicon (no emoji, no external request). -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%230a0e16%22%2F%3E%3Cpath%20d%3D%22M6%2023h6v-6h6v-6h5%22%20fill%3D%22none%22%20stroke%3D%22%2352e08a%22%20stroke-width%3D%223.4%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2211%22%20r%3D%222.6%22%20fill%3D%22%2352e08a%22%2F%3E%3C%2Fsvg%3E" />
   <link rel="stylesheet" href="styles.css" />
 
-  <title>Snake Museum — a gallery of community snake games</title>
-  <meta name="description" content="A curated, static gallery of community-submitted snake games. Every game runs in a sandboxed iframe. Submit yours via pull request." />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Snake Museum" />
+  <meta property="og:title" content="Snake Museum — a curated gallery of community snake games" />
+  <meta property="og:description" content="A curated, open-source gallery of community-built snake games. Every exhibit plays in a sandboxed iframe. Submit your own via pull request." />
+  <meta property="og:url" content="https://snakemuseum.dev/" />
+  <meta property="og:image" content="https://snakemuseum.dev/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Snake Museum — a curated gallery of community-submitted snake games" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Snake Museum — a curated gallery of community snake games" />
+  <meta name="twitter:description" content="A curated, open-source gallery of community-built snake games. Every exhibit plays in a sandboxed iframe. Submit your own via pull request." />
+  <meta name="twitter:image" content="https://snakemuseum.dev/og-image.png" />
+  <meta name="twitter:image:alt" content="Snake Museum — a curated gallery of community-submitted snake games" />
+
+  <!--
+    Structured data (schema.org). The ItemList of games between the markers
+    below is REGENERATED from each game's meta.json by scripts/build.js, so it
+    always stays in sync with the collection. Do not hand-edit inside markers.
+  -->
+  <!-- SNAKE-MUSEUM:JSONLD:START -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://snakemuseum.dev/#website",
+        "name": "Snake Museum",
+        "url": "https://snakemuseum.dev/",
+        "description": "A curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe.",
+        "inLanguage": "en",
+        "publisher": {
+          "@type": "Person",
+          "name": "Ashley McNamara",
+          "url": "https://github.com/ashleymcnamara"
+        }
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://snakemuseum.dev/#collection",
+        "name": "Snake Museum — The Collection",
+        "url": "https://snakemuseum.dev/",
+        "description": "A curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe.",
+        "isPartOf": {
+          "@id": "https://snakemuseum.dev/#website"
+        },
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": 1,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "url": "https://snakemuseum.dev/games/classic-snake/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Classic Snake",
+                "url": "https://snakemuseum.dev/games/classic-snake/",
+                "description": "The timeless snake game, done right: smooth grid movement, wrap-free walls, growing tail, score and high-score tracking, pause, and instant restart. Play with the arrow keys or WASD.",
+                "image": "https://snakemuseum.dev/games/classic-snake/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "classic, arcade, canvas, keyboard, reference"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+  <!-- SNAKE-MUSEUM:JSONLD:END -->
 </head>
 <body>
   <header class="masthead">
     <div class="masthead-inner">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true">🐍</span>
-        <div>
+      <a class="brand" href="/" aria-label="Snake Museum home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 18h5v-4h5v-4h4" />
+            <circle cx="18.5" cy="10" r="1.6" fill="currentColor" stroke="none" />
+          </svg>
+        </span>
+        <div class="brand-text">
           <h1 class="brand-title">Snake Museum</h1>
-          <p class="brand-sub">A curated gallery of community-submitted snake games</p>
+          <span class="brand-sub">A curated gallery of community-submitted snake games</span>
         </div>
-      </div>
+      </a>
       <nav class="masthead-links" aria-label="Primary">
         <a class="ghost-btn" href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">GitHub</a>
         <a class="cta-btn" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">Submit a game</a>
@@ -44,21 +141,33 @@
         <input id="search" type="search" placeholder="Search by title, author, or tag…" autocomplete="off" />
       </div>
       <div class="tagbar" id="tagbar" role="group" aria-label="Filter by tag"></div>
-      <p class="count" id="count" aria-live="polite"></p>
     </section>
 
-    <section id="gallery" class="gallery" aria-label="Games"></section>
+    <section class="collection" aria-labelledby="collection-title">
+      <div class="collection-head">
+        <h2 id="collection-title" class="section-title">The Collection</h2>
+        <p class="count" id="count" aria-live="polite"></p>
+      </div>
 
-    <p id="empty" class="empty" hidden>
-      No games match your filter yet. Clear the search — or
-      <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">submit the first one</a>.
-    </p>
+      <div id="gallery" class="gallery"></div>
+
+      <p id="empty" class="empty" hidden>
+        No games match your filter yet. Clear the search — or
+        <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">submit the first one</a>.
+      </p>
+    </section>
   </main>
 
   <footer class="site-foot">
     <div class="wrap foot-inner">
       <p class="foot-security">
-        🔒 <strong>Security model:</strong> every exhibit is community code, so it is
+        <span class="foot-lock" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+        </span>
+        <strong>Security model:</strong> every exhibit is community code, so it is
         treated as untrusted and played inside a
         <code>&lt;iframe sandbox="allow-scripts"&gt;</code> with an opaque origin —
         it cannot read this site's cookies, storage, or DOM, and no secrets are ever
@@ -81,8 +190,19 @@
           <p id="modal-author" class="modal-author"></p>
         </div>
         <div class="modal-actions">
-          <a id="modal-newtab" class="ghost-btn" href="#" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>
-          <button id="modal-close" class="icon-btn" type="button" aria-label="Close player">✕</button>
+          <a id="modal-newtab" class="ghost-btn" href="#" target="_blank" rel="noopener noreferrer">
+            Open in new tab
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 5h5v5" />
+              <path d="M19 5l-8 8" />
+              <path d="M18 14v3a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3" />
+            </svg>
+          </a>
+          <button id="modal-close" class="icon-btn" type="button" aria-label="Close player">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
         </div>
       </header>
       <div class="modal-stage" id="modal-stage"></div>

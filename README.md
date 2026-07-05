@@ -1,4 +1,4 @@
-# 🐍 Snake Museum
+# Snake Museum
 
 **[snakemuseum.dev](https://snakemuseum.dev)** — a curated, static gallery of
 community-submitted snake games. Every exhibit is a tiny, self-contained web game
@@ -12,7 +12,7 @@ auto-deploys the updated gallery.
 
 ---
 
-## 🎮 How to play
+## How to play
 
 1. Visit **[snakemuseum.dev](https://snakemuseum.dev)**.
 2. Browse the gallery — search or filter by tag.
@@ -22,7 +22,7 @@ Most games use the **arrow keys** or **WASD**; the reference game
 ([`games/classic-snake`](games/classic-snake)) also supports touch swipes,
 `Space` to pause, and `Enter` to restart.
 
-## 🕹️ How to submit a game
+## How to submit a game
 
 Pull requests are the way in. In short:
 
@@ -40,7 +40,7 @@ Prefer not to open a PR? There's a friendly fallback
 [issue form](https://github.com/ashleymcnamara/snakemuseum/issues/new?template=submit-game.yml),
 but PRs are the primary path.
 
-## 🔒 Security model (important)
+## Security model (important)
 
 Every game is **untrusted, community-authored code**, so the museum never runs it
 with any privileges:
@@ -59,12 +59,13 @@ with any privileges:
 This defense-in-depth (sandbox + CSP + CI + review) is why a static, no-backend
 site can safely host arbitrary community games.
 
-## 🛠️ Local development
+## Local development
 
 Requires Node.js 18+ (no dependencies to install).
 
 ```bash
 npm run build     # scan games/, validate, generate site/games.json + site/games/*
+                  # and the SEO artifacts (JSON-LD, robots.txt, sitemap.xml, og-image.png)
 npm run serve     # serve the built site at http://localhost:8080
 npm start         # build + serve in one go
 
@@ -75,7 +76,7 @@ node scripts/validate-submission.js games/classic-snake   # validate one game
 > The gallery fetches `games.json`, so it needs to be served over HTTP (use
 > `npm run serve`) rather than opened with a `file://` URL.
 
-## 🗂️ Project structure
+## Project structure
 
 ```
 games/
@@ -86,12 +87,15 @@ games/
     thumbnail.png      card image
 scripts/
   build.js             builds site/games.json + copies games into site/games/*
+                       and regenerates the JSON-LD, robots.txt, sitemap.xml, og-image.png
   validate-submission.js   the PR/CI security + format gate
   gen-thumbnail.js     zero-dep PNG generator used for the seed thumbnail
+  gen-og-image.js      zero-dep 1200x630 branded Open Graph image generator
   serve.js             zero-dep static server for local preview
   lib/schema.js        tiny zero-dep JSON Schema (subset) validator
+  lib/png.js           shared zero-dep RGB raster + PNG encoder
 site/
-  index.html           the gallery (strict CSP, no third-party scripts)
+  index.html           the gallery (strict CSP, full SEO head, no third-party scripts)
   styles.css  app.js   gallery styling + logic
   CNAME                custom domain for GitHub Pages
 .github/
@@ -100,21 +104,22 @@ site/
   ISSUE_TEMPLATE/submit-game.yml   fallback submission form
 ```
 
-`site/games.json` and `site/games/` are **generated** by the build and are not
-committed (see `.gitignore`); the deploy workflow builds them fresh.
+`site/games.json`, `site/games/`, `site/robots.txt`, `site/sitemap.xml`, and
+`site/og-image.png` are **generated** by the build and are not committed (see
+`.gitignore`); the deploy workflow builds them fresh.
 
-## 🌐 Custom domain
+## Custom domain
 
 The Pages publish root contains a `CNAME` file (`site/CNAME`) set to
 `snakemuseum.dev`, so GitHub Pages serves the site under the custom domain.
 
-⚠️ **DNS must be pointed at GitHub Pages separately** — that's configured at the
+**DNS must be pointed at GitHub Pages separately** — that's configured at the
 domain registrar / DNS provider and **cannot** be done from this repo. Point the
 apex domain at GitHub Pages' IPs (and/or a `www` `CNAME` to
 `ashleymcnamara.github.io`) as described in
 [GitHub's custom domain docs](https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site).
 
-## 📄 License
+## License
 
 The Snake Museum **site and tooling** are released under the
 [MIT License](LICENSE). **Individual games** under `games/<slug>/` remain the work
