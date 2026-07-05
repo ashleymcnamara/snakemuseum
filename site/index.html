@@ -15,7 +15,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; manifest-src 'self'" />
   <meta name="referrer" content="no-referrer" />
   <meta name="color-scheme" content="dark" />
-  <meta name="theme-color" content="#06110d" />
+  <meta name="theme-color" content="#05100c" />
 
   <title>Snake Museum — a curated gallery of community snake games</title>
   <meta name="description" content="Snake Museum is a curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe. Submit your own via pull request." />
@@ -202,133 +202,42 @@
   <!-- SNAKE-MUSEUM:JSONLD:END -->
 </head>
 <body>
-  <header class="masthead">
-    <div class="masthead-inner">
-      <a class="brand" href="/" aria-label="Snake Museum home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 18h5v-4h5v-4h4" />
-            <circle cx="18.5" cy="10" r="1.6" fill="currentColor" stroke="none" />
-          </svg>
-        </span>
-        <span class="brand-word">Snake Museum</span>
-      </a>
-      <nav class="masthead-links" aria-label="Primary">
-        <a class="ghost-btn" href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">GitHub</a>
-        <a class="cta-btn" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">Submit a game</a>
-      </nav>
+  <header>
+    <span class="badge">snakemuseum.dev</span>
+    <h1>The <span class="snake">Snake</span> Museum</h1>
+    <p>The snake game is the world's most-built demo. This is a gallery of them &mdash; every exhibit is made and submitted by the community. Come play, then add your own.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">Submit your snake<svg class="ico" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="cta secondary" href="#gallery">Browse the gallery</a>
+    </div>
+    <div class="stats">
+      <div><b id="count">5</b>exhibits</div>
+      <div><b>100%</b>sandboxed</div>
+      <div><b>0</b>backends</div>
     </div>
   </header>
 
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap hero-inner">
-      <span class="hero-badge">snakemuseum.dev</span>
-      <h1 id="hero-title" class="hero-title">The <span class="hero-accent">Snake</span> Museum</h1>
-      <p class="hero-tagline">
-        The snake game is the world's most-built programming demo. The Snake Museum
-        is a community gallery of them — every exhibit is submitted by the community
-        and plays right here inside a locked-down sandbox. Wander in, play a few,
-        then add your own.
-      </p>
-      <div class="hero-cta">
-        <a class="btn-primary" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">
-          Submit your snake
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M5 12h14" />
-            <path d="M13 6l6 6-6 6" />
-          </svg>
-        </a>
-        <a class="btn-secondary" href="#gallery">Browse the gallery</a>
-      </div>
-      <ul class="hero-stats" aria-label="At a glance">
-        <li class="stat"><b id="stat-count">5</b><span>Exhibits</span></li>
-        <li class="stat"><b>100%</b><span>Sandboxed</span></li>
-        <li class="stat"><b>0</b><span>Backends</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <main id="gallery" class="wrap">
-    <div class="collection-head">
-      <h2 class="section-title">Now exhibiting</h2>
-      <span class="section-rule" aria-hidden="true"></span>
-      <p class="count" id="count" aria-live="polite"></p>
-    </div>
-
-    <section class="toolbar" aria-label="Filter games">
-      <div class="search">
-        <label class="visually-hidden" for="search">Search games</label>
-        <input id="search" type="search" placeholder="Search by title, author, or tag…" autocomplete="off" />
-      </div>
-      <div class="tagbar" id="tagbar" role="group" aria-label="Filter by tag"></div>
-    </section>
-
-    <div id="gallery-grid" class="gallery"></div>
-
-    <p id="empty" class="empty" hidden>
-      No games match your filter yet. Clear the search — or
-      <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">submit the first one</a>.
-    </p>
+  <main id="gallery">
+    <h2 class="section-title">Now exhibiting</h2>
+    <div class="grid" id="grid"></div>
   </main>
 
-  <footer class="site-foot">
-    <div class="wrap foot-inner">
-      <p class="foot-security">
-        <span class="foot-lock" aria-hidden="true">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="5" y="11" width="14" height="9" rx="2" />
-            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-          </svg>
-        </span>
-        <strong>Security model:</strong> every exhibit is community code, so it is
-        treated as untrusted and played inside a
-        <code>&lt;iframe sandbox="allow-scripts"&gt;</code> with an opaque origin —
-        it cannot read this site's cookies, storage, or DOM, and no secrets are ever
-        passed in. Submissions are additionally screened by CI and human review.
-      </p>
-      <p class="foot-meta">
-        Site &amp; tooling under the MIT license · games remain &copy; their authors ·
-        <a href="https://github.com/ashleymcnamara/snakemuseum" rel="noopener noreferrer">source</a>
-      </p>
-    </div>
+  <footer>
+    Built by the community &middot; Every game runs in an isolated sandbox &middot;
+    <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">How submissions work</a>
   </footer>
 
-  <!-- Game player modal (populated by app.js) -->
-  <div class="modal" id="modal" hidden>
-    <div class="modal-backdrop" id="modal-backdrop"></div>
-    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <header class="modal-head">
-        <div class="modal-heading">
-          <h2 id="modal-title" class="modal-title"></h2>
-          <p id="modal-author" class="modal-author"></p>
-        </div>
-        <div class="modal-actions">
-          <a id="modal-newtab" class="ghost-btn" href="#" target="_blank" rel="noopener noreferrer">
-            Open in new tab
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M14 5h5v5" />
-              <path d="M19 5l-8 8" />
-              <path d="M18 14v3a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3" />
-            </svg>
-          </a>
-          <button id="modal-close" class="icon-btn" type="button" aria-label="Close player">
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
-        </div>
-      </header>
-      <div class="modal-stage" id="modal-stage"></div>
-      <p class="modal-note">
-        <span class="modal-lock" aria-hidden="true">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="5" y="11" width="14" height="9" rx="2" />
-            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-          </svg>
-        </span>
-        Running in an isolated sandbox (<code>allow-scripts</code>, opaque origin).
-        This exhibit can't read the museum's page, cookies, or storage.
-      </p>
+  <!-- Sandboxed game viewer -->
+  <div class="viewer" id="viewer">
+    <div class="viewer-inner" role="dialog" aria-modal="true" aria-labelledby="v-title">
+      <div class="viewer-head">
+        <div class="t" id="v-title">Game<small id="v-author"></small></div>
+        <button id="v-close" type="button" aria-label="Close game viewer"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      </div>
+      <!-- CRITICAL: sandbox="allow-scripts" WITHOUT allow-same-origin => opaque origin,
+           the game cannot read the museum's cookies / storage / DOM. -->
+      <iframe id="v-frame" sandbox="allow-scripts" title="Sandboxed game" referrerpolicy="no-referrer"></iframe>
+      <div class="sandbox-note"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V7a6 6 0 0 1 12 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="4" y="10" width="16" height="11" rx="2" fill="currentColor"/></svg><span>Running in an isolated sandbox &mdash; no access to the site, your cookies, or the network.</span></div>
     </div>
   </div>
 
