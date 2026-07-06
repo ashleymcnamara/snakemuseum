@@ -1,9 +1,9 @@
 name: Deploy to GitHub Pages
 
-# Builds the gallery and publishes site/ to GitHub Pages on every push to main.
+# Manual-only: the live site is hosted on Netlify, so this workflow does NOT run on
+# push. Trigger it by hand (Actions tab -> "Run workflow") if you ever want to also
+# publish a copy to GitHub Pages.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
