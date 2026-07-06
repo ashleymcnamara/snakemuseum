@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="color-scheme" content="dark" />
+  <title>Reef Run — Snake Museum</title>
+  <style>
+    :root {
+      --bg: #04121f;
+      --glow: #13425c;
+      --panel: #0b2a3d;
+      --panel-2: #030e19;
+      --snake: #38bdf8;
+      --snake-dark: #227195;
+      --head: #e0f2fe;
+      --accent: #e0f2fe;
+      --food: #fbbf24;
+      --food-hi: #fdd97c;
+      --eye: #04121f;
+      --btn-ink: #04121f;
+      --grid-line: rgba(56, 189, 248, 0.07);
+      --btn-shadow: rgba(56, 189, 248, 0.35);
+      --scrim: rgba(4, 18, 31, 0.74);
+      --ink: #eef2f8;
+      --muted: #93a1b8;
+      --line: rgba(255, 255, 255, 0.08);
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+    }
+
+    body {
+      background:
+        radial-gradient(1200px 800px at 50% -20%, var(--glow) 0%, transparent 60%),
+        var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      min-height: 100%;
+      padding: 20px;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .hud {
+      width: min(92vw, 92vh, 560px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--snake);
+      box-shadow: 0 0 12px var(--snake);
+    }
+
+    .scores { display: flex; gap: 18px; }
+    .score-box { text-align: right; line-height: 1.1; }
+    .score-box .label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+    .score-box .value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .board {
+      position: relative;
+      width: min(92vw, 92vh, 560px);
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(160deg, var(--panel), var(--panel-2));
+      border-radius: 18px;
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+    }
+
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      text-align: center;
+      padding: 24px;
+      background: var(--scrim);
+      backdrop-filter: blur(3px);
+      transition: opacity 0.18s ease;
+    }
+    .overlay[hidden] { display: none; }
+    .overlay h1 { margin: 0; font-size: 1.7rem; }
+    .overlay p { margin: 0; color: var(--muted); max-width: 32ch; line-height: 1.5; }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 26px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--btn-ink);
+      background: linear-gradient(180deg, var(--snake), var(--snake-dark));
+      box-shadow: 0 6px 20px var(--btn-shadow);
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    kbd {
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      padding: 1px 7px;
+      font-size: 0.82em;
+    }
+    .kbd-ico {
+      width: 0.95em;
+      height: 0.95em;
+      vertical-align: -0.14em;
+      display: inline-block;
+    }
+
+    .hint {
+      width: min(92vw, 92vh, 560px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .hint .grp { display: inline-flex; align-items: center; gap: 6px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .overlay { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div class="title"><span class="dot"></span> Reef Run</div>
+    <div class="scores">
+      <div class="score-box">
+        <div class="label">Score</div>
+        <div class="value" id="score">0</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Best</div>
+        <div class="value" id="best">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board">
+    <canvas id="game" aria-label="Reef Run snake board" role="img"></canvas>
+    <div class="overlay" id="overlay" aria-live="polite">
+      <h1 id="ov-title">Reef Run</h1>
+      <p id="ov-text">Weave the sea snake around the coral to reach the golden bubbles. Rocks, walls, and your own tail are lethal. Watch for the current: a shimmer warns before it nudges you sideways. Arrow keys or WASD.</p>
+      <button class="btn" id="ov-btn" type="button">Play</button>
+    </div>
+  </div>
+
+  <div class="hint">
+    <span class="grp"><kbd aria-label="Left arrow"><svg class="kbd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H6m5-5-5 5 5 5"/></svg></kbd><kbd aria-label="Up arrow"><svg class="kbd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V6m-5 5 5-5 5 5"/></svg></kbd><kbd aria-label="Down arrow"><svg class="kbd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v13m-5-5 5 5 5-5"/></svg></kbd><kbd aria-label="Right arrow"><svg class="kbd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h14m-5-5 5 5-5 5"/></svg></kbd> / <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span>
+    <span class="grp"><kbd>Space</kbd> pause</span>
+    <span class="grp"><kbd>Enter</kbd> restart</span>
+  </div>
+
+  <script>
+    "use strict";
+    (function () {
+      const COLS = 21;
+      const ROWS = 21;
+      const BASE_SPEED = 150;
+      const OBSTACLE_COUNT = 8;
+      const CURRENT_INTERVAL = 5200; // ms between currents
+      const TELEGRAPH = 1200;        // ms of warning shimmer before a current
+
+      const canvas = document.getElementById("game");
+      const ctx = canvas.getContext("2d");
+      const scoreEl = document.getElementById("score");
+      const bestEl = document.getElementById("best");
+      const overlay = document.getElementById("overlay");
+      const ovTitle = document.getElementById("ov-title");
+      const ovText = document.getElementById("ov-text");
+      const ovBtn = document.getElementById("ov-btn");
+
+      // Palette is baked into this game's CSS :root; the canvas reads the same
+      // custom properties so the board matches the chrome exactly.
+      const rootStyle = getComputedStyle(document.documentElement);
+      const cssVar = (n) => rootStyle.getPropertyValue(n).trim();
+      function hexToRgb(h) {
+        h = h.replace("#", "");
+        if (h.length === 3) h = h.split("").map((ch) => ch + ch).join("");
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      const PAL = {
+        grid: cssVar("--grid-line"),
+        food: cssVar("--food"),
+        foodHi: cssVar("--food-hi"),
+        head: cssVar("--head"),
+        eye: cssVar("--eye"),
+        tail: hexToRgb(cssVar("--snake-dark")),
+        near: hexToRgb(cssVar("--snake")),
+      };
+      const ROCK = "#274a5e";
+      const ROCK_HI = "#3a6076";
+      const FOAM = PAL.head;
+
+      let cell = 20;
+      let snake, dir, nextDir, food, obstacles, score, best, speed, state, lastStep, raf;
+      let nextCurrentAt, telegraphDir, currentDir;
+
+      best = loadBest();
+      bestEl.textContent = String(best);
+
+      function loadBest() {
+        try {
+          const v = window.localStorage.getItem("reef-run-best");
+          return v ? parseInt(v, 10) || 0 : 0;
+        } catch (e) {
+          return 0; // sandboxed opaque origin: storage is blocked, keep it in memory
+        }
+      }
+      function saveBest(v) {
+        try { window.localStorage.setItem("reef-run-best", String(v)); } catch (e) { /* ignore */ }
+      }
+
+      function fitCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cell = rect.width / COLS;
+        draw();
+      }
+
+      // Keep the snake's start row and its runway ahead clear of coral.
+      function isSafeStart(x, y) {
+        const cx = Math.floor(COLS / 2);
+        const cy = Math.floor(ROWS / 2);
+        return Math.abs(y - cy) <= 1 && x >= cx - 3 && x <= cx + 8;
+      }
+
+      function generateObstacles() {
+        obstacles = [];
+        let attempts = 0;
+        while (obstacles.length < OBSTACLE_COUNT && attempts < 500) {
+          attempts++;
+          const x = 1 + Math.floor(Math.random() * (COLS - 2));
+          const y = 1 + Math.floor(Math.random() * (ROWS - 2));
+          if (isSafeStart(x, y)) continue;
+          if (obstacles.some((o) => o.x === x && o.y === y)) continue;
+          obstacles.push({ x, y });
+        }
+      }
+
+      function reset() {
+        const cx = Math.floor(COLS / 2);
+        const cy = Math.floor(ROWS / 2);
+        snake = [
+          { x: cx - 1, y: cy },
+          { x: cx, y: cy },
+          { x: cx + 1, y: cy },
+        ];
+        dir = { x: 1, y: 0 };
+        nextDir = { x: 1, y: 0 };
+        score = 0;
+        speed = BASE_SPEED;
+        scoreEl.textContent = "0";
+        generateObstacles();
+        placeFood();
+        nextCurrentAt = performance.now() + CURRENT_INTERVAL;
+        telegraphDir = null;
+        currentDir = null;
+      }
+
+      function occupied(x, y) {
+        if (snake && snake.some((s) => s.x === x && s.y === y)) return true;
+        if (obstacles && obstacles.some((o) => o.x === x && o.y === y)) return true;
+        return false;
+      }
+
+      function placeFood() {
+        const free = [];
+        for (let y = 0; y < ROWS; y++) {
+          for (let x = 0; x < COLS; x++) {
+            if (!occupied(x, y)) free.push({ x, y });
+          }
+        }
+        food = free.length ? free[Math.floor(Math.random() * free.length)] : null;
+      }
+
+      function startGame() {
+        reset();
+        state = "running";
+        hideOverlay();
+        lastStep = performance.now();
+        loop(lastStep);
+      }
+
+      function gameOver() {
+        state = "over";
+        if (score > best) {
+          best = score;
+          bestEl.textContent = String(best);
+          saveBest(best);
+        }
+        showOverlay("Game Over", "Score: " + score + " \u00b7 Best: " + best, "Play again");
+        draw();
+      }
+
+      function togglePause() {
+        if (state === "running") {
+          state = "paused";
+          showOverlay("Paused", "The tide waits. So does the coral.", "Resume");
+        } else if (state === "paused") {
+          state = "running";
+          // don't let a current fire the instant we resume
+          nextCurrentAt = performance.now() + Math.max(TELEGRAPH, CURRENT_INTERVAL / 2);
+          telegraphDir = null;
+          hideOverlay();
+          lastStep = performance.now();
+          loop(lastStep);
+        }
+      }
+
+      // Move the head one cell by (mx,my); returns false if the move was fatal.
+      function advance(mx, my) {
+        const prev = snake[snake.length - 1];
+        const head = { x: prev.x + mx, y: prev.y + my };
+
+        const hitWall = head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS;
+        const hitRock = obstacles.some((o) => o.x === head.x && o.y === head.y);
+        const hitSelf = snake.some((s) => s.x === head.x && s.y === head.y);
+        if (hitWall || hitRock || hitSelf) { gameOver(); return false; }
+
+        snake.push(head);
+        if (food && head.x === food.x && head.y === food.y) {
+          score += 10;
+          scoreEl.textContent = String(score);
+          placeFood();
+        } else {
+          snake.shift();
+        }
+        return true;
+      }
+
+      function perpendicular() {
+        // a direction at 90deg to the current heading (a lateral drift)
+        return dir.x !== 0 ? { x: 0, y: Math.random() < 0.5 ? -1 : 1 }
+                           : { x: Math.random() < 0.5 ? -1 : 1, y: 0 };
+      }
+
+      function step() {
+        dir = nextDir;
+        const now = performance.now();
+        const fireCurrent = now >= nextCurrentAt;
+
+        if (!advance(dir.x, dir.y)) return;
+
+        if (fireCurrent) {
+          const drift = telegraphDir || perpendicular();
+          nextCurrentAt = now + CURRENT_INTERVAL;
+          telegraphDir = null;
+          // never shove the head straight back into its own neck
+          if (!(drift.x === -dir.x && drift.y === -dir.y)) {
+            currentDir = drift;
+            advance(drift.x, drift.y);
+          }
+        }
+      }
+
+      function updateTelegraph(now) {
+        const untilFire = nextCurrentAt - now;
+        if (untilFire <= TELEGRAPH && untilFire > 0) {
+          if (!telegraphDir) telegraphDir = perpendicular();
+        } else if (untilFire > TELEGRAPH) {
+          telegraphDir = null;
+        }
+      }
+
+      function loop(now) {
+        if (state !== "running") return;
+        raf = window.requestAnimationFrame(loop);
+        updateTelegraph(now);
+        if (now - lastStep >= speed) {
+          lastStep = now;
+          step();
+          if (state !== "running") return;
+        }
+        draw();
+        drawCurrent(now);
+      }
+
+      function roundRect(x, y, w, h, r) {
+        const rr = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.arcTo(x + w, y, x + w, y + h, rr);
+        ctx.arcTo(x + w, y + h, x, y + h, rr);
+        ctx.arcTo(x, y + h, x, y, rr);
+        ctx.arcTo(x, y, x + w, y, rr);
+        ctx.closePath();
+      }
+
+      function drawChevron(x, y, ang, size) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.4, -size * 0.5);
+        ctx.lineTo(size * 0.45, 0);
+        ctx.lineTo(-size * 0.4, size * 0.5);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Faint directional shimmer that telegraphs an incoming current.
+      function drawCurrent(now) {
+        if (!telegraphDir) return;
+        const untilFire = nextCurrentAt - now;
+        if (untilFire <= 0 || untilFire > TELEGRAPH) return;
+        const inten = 1 - untilFire / TELEGRAPH;
+        const W = COLS * cell;
+        const H = ROWS * cell;
+        const dx = telegraphDir.x;
+        const dy = telegraphDir.y;
+        const ang = Math.atan2(dy, dx);
+        const drift = Math.sin(now / 260) * cell * 0.18;
+        const gap = cell * 1.5;
+        const size = cell * 1.0;
+
+        ctx.save();
+        ctx.strokeStyle = FOAM;
+        ctx.lineWidth = Math.max(2, cell * 0.16);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        for (let k = 0; k < 3; k++) {
+          const off = (k - 1) * gap + drift;
+          const bx = W / 2 + dx * off;
+          const by = H / 2 + dy * off;
+          ctx.globalAlpha = (0.12 + 0.26 * inten) * (1 - Math.abs(k - 1) * 0.22);
+          drawChevron(bx, by, ang, size);
+        }
+        ctx.restore();
+      }
+
+      function draw() {
+        const W = COLS * cell;
+        const H = ROWS * cell;
+        ctx.clearRect(0, 0, W, H);
+
+        // grid
+        ctx.strokeStyle = PAL.grid;
+        ctx.lineWidth = 1;
+        for (let i = 1; i < COLS; i++) {
+          ctx.beginPath(); ctx.moveTo(i * cell, 0); ctx.lineTo(i * cell, H); ctx.stroke();
+        }
+        for (let j = 1; j < ROWS; j++) {
+          ctx.beginPath(); ctx.moveTo(0, j * cell); ctx.lineTo(W, j * cell); ctx.stroke();
+        }
+
+        // coral / rock obstacles
+        if (obstacles) {
+          const pad = cell * 0.1;
+          for (const o of obstacles) {
+            const x = o.x * cell + pad;
+            const y = o.y * cell + pad;
+            const size = cell - pad * 2;
+            ctx.fillStyle = ROCK;
+            roundRect(x, y, size, size, cell * 0.22);
+            ctx.fill();
+            ctx.fillStyle = ROCK_HI;
+            roundRect(x + size * 0.16, y + size * 0.14, size * 0.42, size * 0.34, cell * 0.14);
+            ctx.fill();
+          }
+        }
+
+        // food (golden bubble)
+        if (food) {
+          const fx = food.x * cell + cell / 2;
+          const fy = food.y * cell + cell / 2;
+          const rad = cell * 0.34;
+          const grad = ctx.createRadialGradient(fx - rad * 0.3, fy - rad * 0.3, rad * 0.2, fx, fy, rad);
+          grad.addColorStop(0, PAL.foodHi);
+          grad.addColorStop(1, PAL.food);
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(fx, fy, rad, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.beginPath();
+          ctx.arc(fx - rad * 0.32, fy - rad * 0.34, rad * 0.22, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // snake
+        for (let i = 0; i < snake.length; i++) {
+          const seg = snake[i];
+          const t = i / Math.max(1, snake.length - 1);
+          const pad = cell * 0.12;
+          const x = seg.x * cell + pad;
+          const y = seg.y * cell + pad;
+          const size = cell - pad * 2;
+          const isHead = i === snake.length - 1;
+
+          const r = Math.round(PAL.tail[0] + (PAL.near[0] - PAL.tail[0]) * t);
+          const g = Math.round(PAL.tail[1] + (PAL.near[1] - PAL.tail[1]) * t);
+          const b = Math.round(PAL.tail[2] + (PAL.near[2] - PAL.tail[2]) * t);
+          ctx.fillStyle = isHead ? PAL.head : "rgb(" + r + "," + g + "," + b + ")";
+          roundRect(x, y, size, size, cell * 0.3);
+          ctx.fill();
+
+          if (isHead) {
+            ctx.fillStyle = PAL.eye;
+            const eye = cell * 0.09;
+            const ex = seg.x * cell + cell / 2;
+            const ey = seg.y * cell + cell / 2;
+            const ox = dir.x * cell * 0.16;
+            const oy = dir.y * cell * 0.16;
+            const px = -dir.y * cell * 0.18;
+            const py = dir.x * cell * 0.18;
+            ctx.beginPath(); ctx.arc(ex + ox + px, ey + oy + py, eye, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(ex + ox - px, ey + oy - py, eye, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+      }
+
+      function showOverlay(title, text, btn) {
+        ovTitle.textContent = title;
+        ovText.textContent = text;
+        ovBtn.textContent = btn;
+        overlay.hidden = false;
+      }
+      function hideOverlay() { overlay.hidden = true; }
+
+      function setDirection(nx, ny) {
+        // disallow reversing directly onto the neck
+        if (nx === -dir.x && ny === -dir.y) return;
+        nextDir = { x: nx, y: ny };
+      }
+
+      const KEYS = {
+        ArrowUp: [0, -1], KeyW: [0, -1],
+        ArrowDown: [0, 1], KeyS: [0, 1],
+        ArrowLeft: [-1, 0], KeyA: [-1, 0],
+        ArrowRight: [1, 0], KeyD: [1, 0],
+      };
+
+      window.addEventListener("keydown", function (e) {
+        if (e.code === "Space") {
+          e.preventDefault();
+          if (state === "ready" || state === "over") startGame();
+          else togglePause();
+          return;
+        }
+        if (e.code === "Enter") {
+          e.preventDefault();
+          if (state !== "running") startGame();
+          return;
+        }
+        const d = KEYS[e.code];
+        if (d) {
+          e.preventDefault();
+          if (state === "running") setDirection(d[0], d[1]);
+        }
+      });
+
+      ovBtn.addEventListener("click", function () {
+        if (state === "paused") togglePause();
+        else startGame();
+      });
+
+      // touch swipe controls
+      let touchStart = null;
+      canvas.addEventListener("touchstart", function (e) {
+        touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }, { passive: true });
+      canvas.addEventListener("touchmove", function (e) {
+        if (!touchStart || state !== "running") return;
+        const dx = e.touches[0].clientX - touchStart.x;
+        const dy = e.touches[0].clientY - touchStart.y;
+        if (Math.abs(dx) < 24 && Math.abs(dy) < 24) return;
+        if (Math.abs(dx) > Math.abs(dy)) setDirection(dx > 0 ? 1 : -1, 0);
+        else setDirection(0, dy > 0 ? 1 : -1);
+        touchStart = null;
+      }, { passive: true });
+
+      if (window.ResizeObserver) {
+        new window.ResizeObserver(fitCanvas).observe(canvas);
+      } else {
+        window.addEventListener("resize", fitCanvas);
+      }
+
+      state = "ready";
+      reset();
+      fitCanvas();
+    })();
+  </script>
+</body>
+</html>

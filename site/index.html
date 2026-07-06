@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    Strict, third-party-free Content Security Policy.
+    Everything the gallery loads is same-origin: our own app.js / styles.css,
+    the generated games.json, thumbnails, and the game iframes (frame-src 'self').
+    No 'unsafe-inline' anywhere — all script and style live in local files.
+    (The JSON-LD block below is type="application/ld+json"; it is DATA, never
+    executed, so it is not affected by script-src.)
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; manifest-src 'self'" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#05100c" />
+
+  <title>Snake Museum — a curated gallery of community snake games</title>
+  <meta name="description" content="Snake Museum is a curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe. Submit your own via pull request." />
+  <meta name="keywords" content="snake game, snake games, retro games, arcade games, browser games, html5 games, open source games, game gallery, github pages, community" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Ashley McNamara" />
+  <link rel="canonical" href="https://snakemuseum.dev/" />
+
+  <!-- Monochrome vector snake favicon (committed asset + inline data-URI fallback; no emoji, no external request). -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%230a0e16%22%2F%3E%3Cpath%20d%3D%22M6%2023h6v-6h6v-6h5%22%20fill%3D%22none%22%20stroke%3D%22%2352e08a%22%20stroke-width%3D%223.4%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2211%22%20r%3D%222.6%22%20fill%3D%22%2352e08a%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Snake Museum" />
+  <meta property="og:title" content="Snake Museum — a curated gallery of community snake games" />
+  <meta property="og:description" content="A curated, open-source gallery of community-built snake games. Every exhibit plays in a sandboxed iframe. Submit your own via pull request." />
+  <meta property="og:url" content="https://snakemuseum.dev/" />
+  <meta property="og:image" content="https://snakemuseum.dev/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Snake Museum — a curated gallery of community-submitted snake games" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Snake Museum — a curated gallery of community snake games" />
+  <meta name="twitter:description" content="A curated, open-source gallery of community-built snake games. Every exhibit plays in a sandboxed iframe. Submit your own via pull request." />
+  <meta name="twitter:image" content="https://snakemuseum.dev/og-image.png" />
+  <meta name="twitter:image:alt" content="Snake Museum — a curated gallery of community-submitted snake games" />
+
+  <!--
+    Structured data (schema.org). The ItemList of games between the markers
+    below is REGENERATED from each game's meta.json by scripts/build.js, so it
+    always stays in sync with the collection. Do not hand-edit inside markers.
+  -->
+  <!-- SNAKE-MUSEUM:JSONLD:START -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://snakemuseum.dev/#website",
+        "name": "Snake Museum",
+        "url": "https://snakemuseum.dev/",
+        "description": "A curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe.",
+        "inLanguage": "en",
+        "publisher": {
+          "@type": "Person",
+          "name": "Ashley McNamara",
+          "url": "https://github.com/ashleymcnamara"
+        }
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://snakemuseum.dev/#collection",
+        "name": "Snake Museum — The Collection",
+        "url": "https://snakemuseum.dev/",
+        "description": "A curated, open-source gallery of community-built snake games. Every exhibit is self-contained and plays in a sandboxed iframe.",
+        "isPartOf": {
+          "@id": "https://snakemuseum.dev/#website"
+        },
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": 5,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "url": "https://snakemuseum.dev/games/classic-snake/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Classic Snake",
+                "url": "https://snakemuseum.dev/games/classic-snake/",
+                "description": "The timeless snake game, done right: smooth grid movement, wrap-free walls, growing tail, score and high-score tracking, pause, and instant restart. Play with the arrow keys or WASD.",
+                "image": "https://snakemuseum.dev/games/classic-snake/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "classic, arcade, canvas, keyboard, reference"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "url": "https://snakemuseum.dev/games/neon-nibbler/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Combo Rush",
+                "url": "https://snakemuseum.dev/games/neon-nibbler/",
+                "description": "A synthwave twist on the house engine: the snake accelerates as it grows, and chaining pellets before the combo meter empties stacks a scoring multiplier. Neon glow, punchy arcade pace, arrow keys or WASD.",
+                "image": "https://snakemuseum.dev/games/neon-nibbler/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "combo, arcade, neon"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "url": "https://snakemuseum.dev/games/monochrome/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Portals",
+                "url": "https://snakemuseum.dev/games/monochrome/",
+                "description": "A stark, grid-free take on the house engine in pure grayscale. Two linked portal pairs bend the board: enter a ring and reappear at its twin, direction intact. Lots of negative space, walls and tail lethal. Gateways reposition every game.",
+                "image": "https://snakemuseum.dev/games/monochrome/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "portals, teleport, minimal"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "url": "https://snakemuseum.dev/games/deep-ocean/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Reef Run",
+                "url": "https://snakemuseum.dev/games/deep-ocean/",
+                "description": "An ocean take on the house engine: weave the sea snake around a scattered coral reef to reach golden bubbles. Rocks are regenerated every game, and a gentle current periodically nudges you sideways after a shimmer warning. Walls, coral, and your own tail all end the run.",
+                "image": "https://snakemuseum.dev/games/deep-ocean/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "ocean, obstacles, current"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "url": "https://snakemuseum.dev/games/sunset-serpent/",
+              "item": {
+                "@type": "VideoGame",
+                "name": "Zen Wrap",
+                "url": "https://snakemuseum.dev/games/sunset-serpent/",
+                "description": "A calm, wall-free take on the house engine in a warm dusk palette: the board wraps at every edge, so only your own tail can end the run. The pace never speeds up, and the board slowly deepens from dusk to night as you score.",
+                "image": "https://snakemuseum.dev/games/sunset-serpent/thumbnail.png",
+                "datePublished": "2026-07-04",
+                "applicationCategory": "Game",
+                "gamePlatform": "Web browser",
+                "operatingSystem": "Any modern web browser",
+                "author": {
+                  "@type": "Person",
+                  "name": "Ashley McNamara",
+                  "url": "https://github.com/ashleymcnamara"
+                },
+                "keywords": "wrap, zen, chill"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+  <!-- SNAKE-MUSEUM:JSONLD:END -->
+</head>
+<body>
+  <header>
+    <span class="badge">snakemuseum.dev</span>
+    <h1>The <span class="snake">Snake</span> Museum</h1>
+    <p>The snake game is the world's most-built demo. This is a gallery of them &mdash; every exhibit is made and submitted by the community. Come play, then add your own.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">Submit your snake<svg class="ico" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="cta secondary" href="#gallery">Browse the gallery</a>
+    </div>
+    <div class="stats">
+      <div><b id="count">5</b>exhibits</div>
+      <div><b>100%</b>sandboxed</div>
+      <div><b>0</b>backends</div>
+    </div>
+  </header>
+
+  <main id="gallery">
+    <h2 class="section-title">Now exhibiting</h2>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    Built by the community &middot; Every game runs in an isolated sandbox &middot;
+    <a href="https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md" rel="noopener noreferrer">How submissions work</a>
+  </footer>
+
+  <!-- Sandboxed game viewer -->
+  <div class="viewer" id="viewer">
+    <div class="viewer-inner" role="dialog" aria-modal="true" aria-labelledby="v-title">
+      <div class="viewer-head">
+        <div class="t" id="v-title">Game<small id="v-author"></small></div>
+        <button id="v-close" type="button" aria-label="Close game viewer"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      </div>
+      <!-- CRITICAL: sandbox="allow-scripts" WITHOUT allow-same-origin => opaque origin,
+           the game cannot read the museum's cookies / storage / DOM. -->
+      <iframe id="v-frame" sandbox="allow-scripts" title="Sandboxed game" referrerpolicy="no-referrer"></iframe>
+      <div class="sandbox-note"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V7a6 6 0 0 1 12 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="4" y="10" width="16" height="11" rx="2" fill="currentColor"/></svg><span>Running in an isolated sandbox &mdash; no access to the site, your cookies, or the network.</span></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

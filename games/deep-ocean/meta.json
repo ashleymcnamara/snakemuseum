@@ -1,0 +1,8 @@
+{
+  "title": "Reef Run",
+  "author": "Ashley McNamara",
+  "githubHandle": "ashleymcnamara",
+  "description": "An ocean take on the house engine: weave the sea snake around a scattered coral reef to reach golden bubbles. Rocks are regenerated every game, and a gentle current periodically nudges you sideways after a shimmer warning. Walls, coral, and your own tail all end the run.",
+  "createdAt": "2026-07-04",
+  "tags": ["ocean", "obstacles", "current"]
+}

@@ -1,0 +1,66 @@
+name: Submit a snake game
+description: Suggest a snake game for the museum. Pull requests are the primary path — this form is a friendly fallback.
+title: "[Game] <your game title>"
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for wanting to add to the **Snake Museum**!
+
+        **The primary way to submit is a Pull Request** — it's the only path that
+        actually gets your game into the gallery, because every submission is
+        validated by CI and played inside a sandboxed iframe. Please read
+        [CONTRIBUTING.md](https://github.com/ashleymcnamara/snakemuseum/blob/main/CONTRIBUTING.md)
+        and open a PR that adds a `games/<slug>/` folder.
+
+        Use this issue only if you can't open a PR yourself and want a maintainer
+        or another contributor to help get your game in.
+  - type: input
+    id: title
+    attributes:
+      label: Game title
+      placeholder: e.g. Neon Snake
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author name
+      placeholder: How you'd like to be credited
+    validations:
+      required: true
+  - type: input
+    id: github-handle
+    attributes:
+      label: Your GitHub handle
+      placeholder: e.g. ashleymcnamara (no @)
+    validations:
+      required: true
+  - type: input
+    id: code-link
+    attributes:
+      label: Link to your game's code
+      description: A public repo, gist, or PR containing a self-contained index.html.
+      placeholder: https://github.com/you/your-snake-game
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A short blurb about your game — what makes it fun or unusual?
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Submission rules
+      description: Games must follow these to be accepted (see CONTRIBUTING.md).
+      options:
+        - label: My game is a single self-contained folder (no external network requests or CDNs).
+          required: true
+        - label: No analytics, tracking, cookies, eval, or attempts to escape the iframe.
+          required: true
+        - label: I understand it will run in a sandboxed iframe and be reviewed before merging.
+          required: true

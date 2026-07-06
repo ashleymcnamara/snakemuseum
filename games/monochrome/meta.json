@@ -1,0 +1,8 @@
+{
+  "title": "Portals",
+  "author": "Ashley McNamara",
+  "githubHandle": "ashleymcnamara",
+  "description": "A stark, grid-free take on the house engine in pure grayscale. Two linked portal pairs bend the board: enter a ring and reappear at its twin, direction intact. Lots of negative space, walls and tail lethal. Gateways reposition every game.",
+  "createdAt": "2026-07-04",
+  "tags": ["portals", "teleport", "minimal"]
+}
