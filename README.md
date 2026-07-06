@@ -5,10 +5,10 @@ community-submitted snake games. Every exhibit is a tiny, self-contained web gam
 built by someone in the community. Browse the gallery, hit **Play**, and the game
 runs right in your browser inside a locked-down sandbox.
 
-There is **no backend**. The whole site is static and hosted on GitHub Pages.
+There is **no backend**. The whole site is static and hosted on Netlify.
 New games are added by opening a **pull request** that drops a folder into
 `games/`. CI validates it, a human reviews it, and merging to `main`
-auto-deploys the updated gallery.
+deploys the updated gallery.
 
 ---
 
@@ -98,27 +98,26 @@ site/
   index.html           the gallery (strict CSP, full SEO head, no third-party scripts)
   styles.css  app.js   gallery styling + logic
   favicon.svg          monochrome vector snake favicon
-  CNAME                custom domain for GitHub Pages
 .github/
   workflows/validate.yml   validate PRs that touch games/**
-  workflows/deploy.yml     build + deploy to GitHub Pages on push to main
+  workflows/deploy.yml     optional manual build + publish to GitHub Pages
   ISSUE_TEMPLATE/submit-game.yml   fallback submission form
 ```
 
 `site/games.json`, `site/games/`, `site/robots.txt`, `site/sitemap.xml`, and
-`site/og-image.png` are **generated** by the build and are not committed (see
-`.gitignore`); the deploy workflow builds them fresh.
+`site/og-image.png` are **generated** by `npm run build` and are not committed
+(see `.gitignore`); the host builds them fresh on deploy.
 
-## Custom domain
+## Hosting & custom domain
 
-The Pages publish root contains a `CNAME` file (`site/CNAME`) set to
-`snakemuseum.dev`, so GitHub Pages serves the site under the custom domain.
+The live site is hosted on **Netlify** (build command `npm run build`, publish
+directory `site`), served at [snakemuseum.dev](https://snakemuseum.dev). The
+custom domain and DNS are configured in Netlify / at the domain registrar and
+**cannot** be set from this repo.
 
-**DNS must be pointed at GitHub Pages separately** — that's configured at the
-domain registrar / DNS provider and **cannot** be done from this repo. Point the
-apex domain at GitHub Pages' IPs (and/or a `www` `CNAME` to
-`ashleymcnamara.github.io`) as described in
-[GitHub's custom domain docs](https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site).
+A GitHub Pages workflow (`.github/workflows/deploy.yml`) is also included but is
+**manual-only** (run it from the Actions tab) so it doesn't compete with Netlify
+for the domain. If triggered, it publishes to `ashleymcnamara.github.io/snakemuseum/`.
 
 ## License
 
