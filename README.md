@@ -1,6 +1,6 @@
 # Snake Museum
 
-**[snakemuseum.dev](https://snakemuseum.dev)** — a curated, static gallery of
+**[Snake Museum](https://ashleymcnamara.github.io/snakemuseum/)** — a curated, static gallery of
 community-submitted snake games. Every exhibit is a tiny, self-contained web game
 built by someone in the community. Browse the gallery, hit **Play**, and the game
 runs right in your browser inside a locked-down sandbox.
@@ -14,7 +14,7 @@ deploys the updated gallery.
 
 ## How to play
 
-1. Visit **[snakemuseum.dev](https://snakemuseum.dev)**.
+1. Visit **[ashleymcnamara.github.io/snakemuseum](https://ashleymcnamara.github.io/snakemuseum/)**.
 2. Browse the gallery — search or filter by tag.
 3. Click **Play** on any card. The game opens in a sandboxed player.
 
@@ -110,14 +110,12 @@ site/
 
 ## Hosting & custom domain
 
-The live site is hosted on **Netlify** (build command `npm run build`, publish
-directory `site`), served at [snakemuseum.dev](https://snakemuseum.dev). The
-custom domain and DNS are configured in Netlify / at the domain registrar and
-**cannot** be set from this repo.
+The live site is published via **GitHub Pages** at
+[ashleymcnamara.github.io/snakemuseum](https://ashleymcnamara.github.io/snakemuseum/)
+(build command `npm run build`, publish directory `site`).
 
-A GitHub Pages workflow (`.github/workflows/deploy.yml`) is also included but is
-**manual-only** (run it from the Actions tab) so it doesn't compete with Netlify
-for the domain. If triggered, it publishes to `ashleymcnamara.github.io/snakemuseum/`.
+> **Note:** The custom domain `snakemuseum.dev` is not currently active. The
+> GitHub Pages URL above is the working entry point.
 
 ## License
 
